@@ -17,8 +17,8 @@ import EditBrand from "./brand/EditBrand";
 import NewAccount from "./account/NewAccount";
 import EditCategory from "./category/EditCategory";
 import NewCategory from "./category/NewCategory";
-import NewSale from './sale/NewSale';
-import EditSale from './sale/EditSale';
+import NewSale from "./sale/NewSale";
+import EditSale from "./sale/EditSale";
 
 const Routes = () => {
   return (

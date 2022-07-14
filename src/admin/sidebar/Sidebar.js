@@ -18,7 +18,7 @@ const SidebarItem = (props) => {
 };
 const Sidebar = (props) => {
   const activeItem = sidebar_items.findIndex(
-    (item) => item.route === props.location.pathname
+    (item) => item.route === props.location.pathname || item.add === props.location.pathname || item.modify === props.location.pathname.substring(0, props.location.pathname.lastIndexOf("/"))
   );
 
   return (
