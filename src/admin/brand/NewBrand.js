@@ -1,32 +1,30 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useHistory } from "react-router-dom";
-import {createVoucher} from '../../api/VoucherApi';
+import { useHistory} from "react-router-dom";
+import { createBrand } from "../../api/BrandApi";
 import { toast } from "react-toastify";
 
 const NewBrand = () => {
   const history = useHistory();
-  
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const submitHandler = (data) =>{
+  const submitHandler = (data) => {
     const result = {
-      ...data,
-      id: null,
-      createDate: null,
-      isActive: null
-    }
-    createVoucher(result)
-    .then(() => {
-      toast.success("Thêm voucher thành công.");
-      history.push('/brand');
-    })
-    .catch((error) => toast.error(error.response.data.Errors));
-  }
+      ...data
+    };
+    createBrand(result)
+      .then(() => {
+        toast.success("Thêm mới brand thành công.");
+        history.push("/brand");
+      })
+      .catch((error) => toast.error(error.response.data.Errors));
+  };
+
   return (
     <div className="container-fluid card">
       <div className="col-10 offset-1 text-center">
@@ -34,73 +32,54 @@ const NewBrand = () => {
       </div>
       <div className="row">
         <div className="col-10 offset-1">
-          <form className="needs-validation" onSubmit={handleSubmit(submitHandler)}>
+          <form
+            className="needs-validation"
+            onSubmit={handleSubmit(submitHandler)}
+          >
             <div className="row g-3">
               <div className="col-sm-6">
-                <label className="form-label">Code</label>
+                <label className="form-label">Tên thương hiệu</label>
                 <input
                   type="text"
                   className="form-control"
-                  id="lastName"
-                  {...register("code", {
+                  {...register("name", {
                     required: true,
-                    pattern: /^\s*\S+.*/
+                    pattern: /^\s*\S+.*/,
                   })}
                 />
-                {errors.code && (
+                {errors.name && (
                   <div className="alert alert-danger" role="alert">
-                    Code không hợp lệ!
+                    Tên không hợp lệ!
                   </div>
                 )}
               </div>
-              <div className="col-sm-6">
-                <label className="form-label">Giảm giá</label>
-                <input
-                  type="number"
+              <div className="col-12 mt-5">
+                <label className="form-label">Mô tả</label>
+                <textarea
                   className="form-control"
-                  id="lastName"
-                  {...register("discount", {
+                  id="exampleFormControlTextarea1"
+                  rows={3}
+                  {...register("description", {
                     required: true,
-                    min: 0,
-                    max: 100
+                    pattern: /^\s*\S+.*/,
                   })}
-                />
-                {errors.discount && (
+                ></textarea>
+                {errors.description && (
                   <div className="alert alert-danger" role="alert">
-                    Giảm giá không hợp lệ!
+                    Mô tả không hợp lệ!
                   </div>
                 )}
-              </div>
+              </div>         
               <div className="col-sm-6 mt-5">
-                <label className="form-label">Lượt sử dụng</label>
-                <input
-                  type="number"
+                <label className="form-label">Trạng thái hoạt động</label>
+                <select
                   className="form-control"
-                  id="lastName"
-                  {...register("count", {
-                    required: true,
-                    min: 0
-                  })}
-                />
-                {errors.count && (
-                  <div className="alert alert-danger" role="alert">
-                    Lượt sử dụng không hợp lệ!
-                  </div>
-                )}
-              </div>
-              <div className="col-sm-6 mt-5">
-                <label className="form-label">Ngày hết hạn</label>
-                <input
-                  type="date"
-                  min="2022-01-01"
-                  max="2023-01-01"
-                  className="form-control"
-                  id="lastName"
-                  {...register("expireDate", {
-                    required: true
-                  })}
-                />
-              </div>
+                  {...register("isActive", { required: false })}
+                >
+                  <option value="false">Không hoạt động</option>
+                  <option value="true">Hoạt động</option>
+                </select>
+              </div>           
             </div>
             <button
               className="btn btn-primary btn-lg mt-5 mb-5"

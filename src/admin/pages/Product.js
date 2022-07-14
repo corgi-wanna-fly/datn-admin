@@ -91,7 +91,6 @@ const Product = () => {
                     <th scope="col">Mô tả</th>
                     <th scope="col">Trạng thái</th>
                     <th scope="col">Cập nhật</th>
-                    <th scope="col">Dừng bán</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -118,12 +117,6 @@ const Product = () => {
                               className="fa fa-pencil-square-o"
                               aria-hidden="true"
                             ></i>
-                          </NavLink>
-                        </th>
-                        <th>
-                          {" "}
-                          <NavLink to={`/order-detail/${item.id}`} exact>
-                            <i className="fa fa-trash-o" aria-hidden="true"></i>
                           </NavLink>
                         </th>
                       </tr>

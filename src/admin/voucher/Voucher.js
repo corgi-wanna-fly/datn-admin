@@ -37,9 +37,6 @@ const Voucher = () => {
     });
   };
 
-  const cancelHandler = (id) => {
-    console.log(id);
-  };
   return (
     <div className="card">
       <div className="card__header mb-5">

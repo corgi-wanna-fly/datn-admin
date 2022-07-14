@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 const EditVoucher = () => {
   const history = useHistory();
   const { id } = useParams();
-  const [voucher, setVoucher] = useState();
   const {
     register,
     handleSubmit,
@@ -18,7 +17,6 @@ const EditVoucher = () => {
   useEffect(() => {
     getVoucherDetail(id).then((resp) => {
       reset(resp.data);
-      setVoucher(resp.data);
     });
   }, []);
 

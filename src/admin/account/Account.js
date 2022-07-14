@@ -5,7 +5,7 @@ const Account = () => {
         <div className="card">
           <div className="card__header mb-5">
             <NavLink
-              to="/add-brand"
+              to="/add-account"
               className="btn btn-primary"
               style={{ borderRadius: 50 }}
             >

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useHistory, useParams } from "react-router-dom";
-import { updateVoucher, getVoucherDetail } from "../../api/VoucherApi";
+import { updateBrand, getBrandDetail } from "../../api/BrandApi";
 import { toast } from "react-toastify";
 
 const EditBrand = () => {
   const history = useHistory();
   const { id } = useParams();
-  const [voucher, setVoucher] = useState();
+
   const {
     register,
     handleSubmit,
@@ -16,9 +16,8 @@ const EditBrand = () => {
   } = useForm();
 
   useEffect(() => {
-    getVoucherDetail(id).then((resp) => {
+    getBrandDetail(id).then((resp) => {
       reset(resp.data);
-      setVoucher(resp.data);
     });
   }, []);
 
@@ -29,9 +28,9 @@ const EditBrand = () => {
       createDate: null
     };
     console.log(result);
-    updateVoucher(result)
+    updateBrand(result)
       .then(() => {
-        toast.success("Cập nhật voucher thành công.");
+        toast.success("Cập nhật brand thành công.");
         history.push("/brand");
       })
       .catch((error) => toast.error(error.response.data.Errors));
@@ -50,15 +49,14 @@ const EditBrand = () => {
           >
             <div className="row g-3">
               <div className="col-sm-6">
-                <label className="form-label">Code</label>
+                <label className="form-label">Tên thương hiệu</label>
                 <input
                   type="text"
                   className="form-control"
-                  {...register("code", {
+                  {...register("name", {
                     required: true,
                     pattern: /^\s*\S+.*/,
                   })}
-                  readOnly
                 />
                 {errors.code && (
                   <div className="alert alert-danger" role="alert">
@@ -66,51 +64,23 @@ const EditBrand = () => {
                   </div>
                 )}
               </div>
-              <div className="col-sm-6">
-                <label className="form-label">Giảm giá</label>
-                <input
-                  type="number"
+              <div className="col-12 mt-5">
+                <label className="form-label">Mô tả</label>
+                <textarea
                   className="form-control"
-                  {...register("discount", {
+                  id="exampleFormControlTextarea1"
+                  rows={3}
+                  {...register("description", {
                     required: true,
-                    min: 0,
-                    max: 100,
+                    pattern: /^\s*\S+.*/,
                   })}
-                />
-                {errors.discount && (
+                ></textarea>
+                {errors.address && (
                   <div className="alert alert-danger" role="alert">
-                    Giảm giá không hợp lệ!
+                    Địa chỉ không hợp lệ!
                   </div>
                 )}
-              </div>
-              <div className="col-sm-6 mt-5">
-                <label className="form-label">Lượt sử dụng</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  {...register("count", {
-                    required: true,
-                    min: 0,
-                  })}
-                />
-                {errors.count && (
-                  <div className="alert alert-danger" role="alert">
-                    Lượt sử dụng không hợp lệ!
-                  </div>
-                )}
-              </div>
-              <div className="col-sm-6 mt-5">
-                <label className="form-label">Ngày hết hạn</label>
-                <input
-                  type="date"
-                  min="2022-01-01"
-                  max="2023-01-01"
-                  className="form-control"
-                  {...register("expireDate", {
-                    required: true,
-                  })}
-                />
-              </div>
+              </div>         
               <div className="col-sm-6 mt-5">
                 <label className="form-label">Trạng thái hoạt động</label>
                 <select
@@ -120,17 +90,7 @@ const EditBrand = () => {
                   <option value="false">Không hoạt động</option>
                   <option value="true">Hoạt động</option>
                 </select>
-              </div>
-              <div className="col-sm-6 mt-5">
-                <label className="form-label">Trạng thái hoạt động</label>
-                <select
-                  className="form-control"
-                  {...register("isActive", { required: false })}
-                >
-                  <option value="false">Không hoạt động</option>
-                  <option value="true">Hoạt động</option>
-                </select>
-              </div>
+              </div>           
             </div>
             <button
               className="btn btn-primary btn-lg mt-5 mb-5"
