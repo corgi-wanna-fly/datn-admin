@@ -1,14 +1,26 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import {createAccount} from '../../api/AccountApi';
+import { useHistory} from "react-router-dom";
+import { toast } from "react-toastify";
 
 const NewAccount = () => {
+  const history = useHistory();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmitHandler = (data) => {};
+  const onSubmitHandler = (data) => {
+    createAccount(data)
+    .then(() => {
+      toast.success("Thêm tài khoản thành công.");
+      history.push('/accounts')
+    })
+    .catch((error) => toast.error(error.response.data.Errors));
+  };
 
   return (
     <div className="pb-3 container-fluid card">
@@ -24,49 +36,46 @@ const NewAccount = () => {
             <div className="col-sm-6 mt-2">
               <label className="form-label">Username</label>
               <input
-                type="password"
+                type="text"
                 className="form-control"
-                id="lastName"
-                {...register("fullname", {
+                {...register("username", {
                   required: true,
-                  pattern: /^\s*\S+.*/,
+                  pattern: /^\s*\S+.*/
                 })}
               />
-              {errors.fullname && (
+              {errors.username && (
                 <div className="alert alert-danger" role="alert">
-                  Họ tên không hợp lệ!
+                  User không hợp lệ!
                 </div>
               )}
             </div>
             <div className="col-sm-6 mt-2">
-              <label className="form-label">Password</label>
+              <label className="form-label">Mật khẩu</label>
               <input
-                type="text"
+                type="password"
                 className="form-control"
-                id="lastName"
-                {...register("phone", {
+                {...register("password", {
                   required: true,
-                  pattern: /^0[0-9]{9}$/,
+                  pattern: /^\s*\S+.*/
                 })}
               />
-              {errors.phone && (
+              {errors.password && (
                 <div className="alert alert-danger" role="alert">
-                  Số điện thoại không hợp lệ!
+                  Mật khẩu không hợp lệ!
                 </div>
               )}
             </div>
             <div className="col-sm-6 mt-5">
               <label className="form-label">Họ tên</label>
               <input
-                type="password"
+                type="text"
                 className="form-control"
-                id="lastName"
-                {...register("fullname", {
+                {...register("fullName", {
                   required: true,
-                  pattern: /^\s*\S+.*/,
+                  pattern: /^\s*\S+.*/
                 })}
               />
-              {errors.fullname && (
+              {errors.fullName && (
                 <div className="alert alert-danger" role="alert">
                   Họ tên không hợp lệ!
                 </div>
@@ -77,15 +86,48 @@ const NewAccount = () => {
               <input
                 type="text"
                 className="form-control"
-                id="lastName"
-                {...register("phone", {
+                {...register("email", {
                   required: true,
-                  pattern: /^0[0-9]{9}$/,
+                  pattern: /^\s*\S+.*/
                 })}
               />
-              {errors.phone && (
+              {errors.email && (
                 <div className="alert alert-danger" role="alert">
-                  Số điện thoại không hợp lệ!
+                  Email không hợp lệ!
+                </div>
+              )}
+            </div>
+            <div className="col-sm-6 mt-5">
+              <label className="form-label">Giới tính</label> <br />
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  {...register("gender", {
+                  required: true
+                })}
+                  value="Nam"
+                />
+                <label class="form-check-label" for="inlineRadio1">
+                  Nam
+                </label>
+              </div>
+              <div class="form-check form-check-inline ml-5">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  {...register("gender", {
+                  required: true
+                })}
+                  value="Nữ"
+                />
+                <label class="form-check-label">
+                  Nữ
+                </label>
+              </div>
+              {errors.gender && (
+                <div className="alert alert-danger" role="alert">
+                  Mời chọn giới tính!
                 </div>
               )}
             </div>
@@ -108,19 +150,18 @@ const NewAccount = () => {
             </div>
 
             <div className="col-sm-6 mt-5">
-              <label className="form-label">Email</label>
+              <label className="form-label">Số điện thoại</label>
               <input
                 type="text"
                 className="form-control"
-                id="lastName"
-                {...register("email", {
+                {...register("phone", {
                   required: true,
-                  pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  pattern: /^0[0-9]{9}$/
                 })}
               />
-              {errors.email && (
+              {errors.phone && (
                 <div className="alert alert-danger" role="alert">
-                  Email không hợp lệ!
+                  Số điện thoại không hợp lệ!
                 </div>
               )}
             </div>
@@ -129,45 +170,26 @@ const NewAccount = () => {
               <input
                 type="date"
                 className="form-control"
-                id="lastName"
-                {...register("email", {
-                  required: true,
-                  pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                {...register("birthDate", {
+                  required: true
                 })}
               />
-              {errors.email && (
+              {errors.birthDate && (
                 <div className="alert alert-danger" role="alert">
-                  Email không hợp lệ!
+                  Ngày sinh không hợp lệ!
                 </div>
               )}
-            </div>
+            </div>          
             <div className="col-sm-6 mt-5">
-              <label className="form-label">Giới tính</label> <br />
-              <div class="form-check form-check-inline">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  id="inlineRadio1"
-                  value="option1"
-                />
-                <label class="form-check-label" for="inlineRadio1">
-                  1
-                </label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input
-                  class="form-check-input"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  id="inlineRadio2"
-                  value="option2"
-                />
-                <label class="form-check-label" for="inlineRadio2">
-                  2
-                </label>
-              </div>
-            </div>
+                <label className="form-label">Vai trò</label>
+                <select
+                  className="form-control"
+                  {...register("roleId", { required: false })}
+                >
+                  <option value="2">Nhân viên</option>
+                  <option value="3">Khách hàng</option>
+                </select>
+              </div>            
           </div>
 
           <button

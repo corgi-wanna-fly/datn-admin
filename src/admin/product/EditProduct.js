@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import React from 'react'
 import CardProfile from "../image/CardProfile";
 import AttributeForm from "../attribute/AttributeForm";
+import { useForm } from "react-hook-form";
 
-const ProductForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm();
-
+const EditProduct = () => {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+      } = useForm();
+    
   return (
     <div className="pb-3 container-fluid card">
       <div className="col-10 offset-1 text-center">
@@ -18,19 +17,19 @@ const ProductForm = () => {
       </div>
       <div className="row">
         <div className="col-md-5 col-lg-4 order-md-last">
-         <div className="card">
-         <h4 className="d-flex justify-content-between align-items-center mb-2">
-            <span className="text-dark">Biến thể sản phẩm</span> <br />
-          </h4>
-          <span className="text-dark">Số lượng</span> <br />
-          <select class="form-control mt-3 mb-2">
+          <div className="card">
+            <h4 className="d-flex justify-content-between align-items-center mb-1">
+              <span className="text-dark">Biến thể sản phẩm</span> <br />
+            </h4>
+            <span className="text-dark">Số lượng</span> <br />
+            <select class="form-control mb-2">
               <option>1</option>
               <option>2</option>
               <option selected>3</option>
               <option>4</option>
               <option>5</option>
             </select>
-         </div>
+          </div>
           <AttributeForm></AttributeForm>
           <AttributeForm></AttributeForm>
           <AttributeForm></AttributeForm>
@@ -174,7 +173,7 @@ const ProductForm = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProductForm;
+export default EditProduct

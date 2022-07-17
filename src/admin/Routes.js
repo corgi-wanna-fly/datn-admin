@@ -4,8 +4,8 @@ import Dashboard from "./pages/Dashboard";
 import Account from "./account/Account";
 import Order from "./pages/Order";
 import OrderForm from "./pages/OrderForm";
-import Product from "./pages/Product";
-import ProductForm from "./pages/ProductForm";
+import Product from "./product/Product";
+import ProductForm from "./product/ProductForm";
 import Voucher from "./voucher/Voucher";
 import Category from "./category/Category";
 import Sale from "./sale/Sale";
@@ -19,6 +19,9 @@ import EditCategory from "./category/EditCategory";
 import NewCategory from "./category/NewCategory";
 import NewSale from "./sale/NewSale";
 import EditSale from "./sale/EditSale";
+import EditAccount from './account/EditAccount';
+import OrderDetail from "./pages/OrderDetail";
+import EditProduct from "./product/EditProduct";
 
 const Routes = () => {
   return (
@@ -65,6 +68,15 @@ const Routes = () => {
       </Route>
       <Route path={`/order-detail/:id`} exact>
         <OrderForm></OrderForm>
+      </Route>
+      <Route path={`/product-detail/:id`} exact>
+        <EditProduct></EditProduct>
+      </Route>
+      <Route path={`/detail-order/:id`} exact>
+        <OrderDetail></OrderDetail>
+      </Route>
+      <Route path={`/account-detail/:id`} exact>
+        <EditAccount></EditAccount>
       </Route>
       <Route path={`/voucher-detail/:id`} exact>
         <EditVoucher></EditVoucher>

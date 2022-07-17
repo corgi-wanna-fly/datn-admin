@@ -18,6 +18,10 @@ const orderStatus = {
   "Đã hủy": "danger",
 };
 
+const pendingStatus = {
+  true: "success",
+  false: "danger",
+};
 const Order = () => {
   const [orders, setOrders] = useState([]);
   const [show, setShow] = useState(false);
@@ -130,9 +134,7 @@ const Order = () => {
                   onChange={(event) => getAllOrderByStatus(event.target.value)}
                   checked={status == item.id}
                 />
-                <label className="form-check-label">
-                  {item.name}
-                </label>
+                <label className="form-check-label">{item.name}</label>
               </div>
             ))}
         </div>
@@ -178,16 +180,19 @@ const Order = () => {
                     {orders &&
                       orders.map((item, index) => (
                         <tr key={index}>
-                          <th scope="row">#OD{item.id}</th>
+                          <th scope="row"><NavLink to={`/detail-order/${item.id}`} exact> 
+                          #OD{item.id}
+                          </NavLink></th>
                           <th>{item.modifyDate}</th>
-                          <th
-                            className={
-                              item.isPending ? "text-success" : "text-danger"
-                            }
-                          >
-                            {item.isPending
-                              ? "Đã thanh toán"
-                              : "Chưa thanh toán"}
+                          <th>
+                            <Badge
+                              type={pendingStatus[item.isPending]}
+                              content={
+                                item.isPending
+                                  ? "Đã thanh toán"
+                                  : "Chưa thanh toán"
+                              }
+                            />
                           </th>
                           <th> {item.total.toLocaleString()} ₫</th>
                           <th>
@@ -247,12 +252,16 @@ const Order = () => {
                             </div>
                           </th>
                           <th>
-                            <NavLink to={`/order-detail/${item.id}`} exact>
-                              <i
-                                className="fa fa-pencil-square-o"
-                                aria-hidden="true"
-                              ></i>
-                            </NavLink>{" "}
+                            {item.orderStatus.id !== 4 && item.orderStatus.id !== 3 && item.orderStatus.id !== 2 ? (
+                              <NavLink to={`/order-detail/${item.id}`} exact>
+                                <i
+                                  className="fa fa-pencil-square-o"
+                                  aria-hidden="true"
+                                ></i>
+                              </NavLink>
+                            ) : (
+                              ""
+                            )}
                           </th>
                         </tr>
                       ))}
