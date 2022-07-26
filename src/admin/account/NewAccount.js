@@ -14,6 +14,7 @@ const NewAccount = () => {
   } = useForm();
 
   const onSubmitHandler = (data) => {
+    console.log(data);
     createAccount(data)
     .then(() => {
       toast.success("Thêm tài khoản thành công.");

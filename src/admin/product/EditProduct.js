@@ -1,15 +1,14 @@
-import React from 'react'
-import CardProfile from "../image/CardProfile";
+import React from "react";
 import AttributeForm from "../attribute/AttributeForm";
 import { useForm } from "react-hook-form";
 
 const EditProduct = () => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-      } = useForm();
-    
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   return (
     <div className="pb-3 container-fluid card">
       <div className="col-10 offset-1 text-center">
@@ -105,7 +104,7 @@ const EditProduct = () => {
                 <label className="form-label mb-3">Loại sản phẩm</label> <br />
                 <div class="form-check form-check-inline mr-5">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="checkbox"
                     id="inlineCheckbox1"
                     value="option1"
@@ -116,7 +115,7 @@ const EditProduct = () => {
                 </div>
                 <div class="form-check form-check-inline mr-5">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="checkbox"
                     id="inlineCheckbox2"
                     value="option2"
@@ -127,7 +126,7 @@ const EditProduct = () => {
                 </div>
                 <div class="form-check form-check-inline mr-5">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="checkbox"
                     id="inlineCheckbox1"
                     value="option1"
@@ -138,7 +137,7 @@ const EditProduct = () => {
                 </div>
                 <div class="form-check form-check-inline mr-5">
                   <input
-                    class="form-check-input"
+                    className="form-check-input"
                     type="checkbox"
                     id="inlineCheckbox2"
                     value="option2"
@@ -151,14 +150,7 @@ const EditProduct = () => {
               <div className="col-12 mt-5">
                 <label className="form-label mb-3">Hình ảnh sản phẩm</label>{" "}
                 <br />
-                <div className="container-fluid row">
-                  <CardProfile name="Tổng thể"></CardProfile>
-                  <CardProfile name="Mặt trước"></CardProfile>
-                  <CardProfile name="Mặt sau"></CardProfile>
-                  <CardProfile name="Lưỡi gà"></CardProfile>
-                  <CardProfile name="Đế giày"></CardProfile>
-                  <CardProfile name="Lót giày"></CardProfile>
-                </div>
+                <div className="container-fluid row"></div>
               </div>
             </div>
 
@@ -173,7 +165,7 @@ const EditProduct = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EditProduct
+export default EditProduct;

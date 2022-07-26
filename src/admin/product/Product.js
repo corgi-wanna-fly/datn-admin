@@ -66,7 +66,7 @@ const Product = () => {
             />
             <label className="form-check-label">Đang bán</label>
           </div>
-          <div className="form-check form-check-inline mr-5 ml-5">
+          <div className="form-check form-check-inline mr-5 ml-2">
             <input
               className="form-check-input"
               type="radio"

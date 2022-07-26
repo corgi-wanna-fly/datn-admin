@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   getAllOrderAndPagination,
   updateOrderWithStatus,
+  getOrderByOrderStatusAndYearAndMonth
 } from "../../api/OrderApi";
 import "../table/table.css";
 import Badge from "../badge/Badge";
@@ -22,6 +23,9 @@ const pendingStatus = {
   true: "success",
   false: "danger",
 };
+
+const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
 const Order = () => {
   const [orders, setOrders] = useState([]);
   const [show, setShow] = useState(false);
@@ -38,6 +42,8 @@ const Order = () => {
   const [obj, setObj] = useState({});
   const [total, setTotal] = useState();
   const [page, setPage] = useState(1);
+  const [year, setYear] = useState(2022);
+
 
   var rows = new Array(total).fill(0).map((zero, index) => (
     <li
@@ -56,10 +62,12 @@ const Order = () => {
   const onChangePage = (page) => {
     setPage(page);
   };
+
   useEffect(() => {
     onLoad();
   }, [page]);
 
+  
   const onLoad = () => {
     getAllOrderAndPagination(status, page, 8)
       .then((res) => {
@@ -102,41 +110,71 @@ const Order = () => {
       })
       .catch((error) => console.log(error.response.data.Errors));
   };
+
+  const getAllOrderByOrderStatusAndYearAndMonth = (value) =>{
+    console.log(year + "-" + value);
+    getOrderByOrderStatusAndYearAndMonth(status, year, value, page, 8)
+    .then((res) => {
+      setOrders(res.data.content);
+      setTotal(res.data.totalPages);
+    })
+    .catch((error) => console.log(error.response.data.Errors));
+  }
+
+  const changeYearHandler = (value) =>{
+    console.log(value);
+    setYear(value);
+  }
   return (
     <div className="col-12">
       <div className="card">
         <div className="card__header">
           <h3>Đơn hàng</h3>
         </div>
-        <div className="mb-3 mt-3">
-          <div className="form-check form-check-inline mr-5 ml-1">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="inlineRadioOptions"
-              value="0"
+        <div className="row">
+          <div className="col-sm-4 mt-2">
+            <select
+              className="form-control"
               onChange={(event) => getAllOrderByStatus(event.target.value)}
-              checked={status == 0}
-            />
-            <label className="form-check-label">Tất cả</label>
+            >
+              <option value="0">Tất cả</option>
+              {orderStatuses &&
+                orderStatuses.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+            </select>
           </div>
-          {orderStatuses &&
-            orderStatuses.map((item, index) => (
-              <div
-                className="form-check form-check-inline mr-5 ml-5"
-                key={index}
-              >
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  value={item.id}
-                  onChange={(event) => getAllOrderByStatus(event.target.value)}
-                  checked={status == item.id}
-                />
-                <label className="form-check-label">{item.name}</label>
-              </div>
-            ))}
+          <div className="col-sm-4 mt-2">
+            <select className="form-control" onChange={(e) => changeYearHandler(e.target.value)}>
+            <option selected disabled hidden>Chọn năm</option>
+              <option value="2019">2019</option>
+              <option value="2021">2021</option>
+              <option value="2022">2022</option>
+            </select>
+          </div>
+          <div className="col-sm-4 mt-2">
+            <select className="form-control" onChange={(e) => getAllOrderByOrderStatusAndYearAndMonth(e.target.value)}>
+            <option selected disabled hidden>Chọn tháng</option>
+              {month && month.map((item, index) => (
+                <option key={index} value={item}>Tháng {item}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-4 mt-2">
+            <input type="date" name="" id="" className="border" />
+          </div>
+
+          <div className="col-sm-4 mt-2">
+            <input type="date" name="" id="" className="border" />
+          </div>
+          <button className="btn btn-primary mt-2">Tìm kiếm</button>
+        </div>
+        <div className="row">
+          
         </div>
         <div className="card__body">
           {orders && (
@@ -180,10 +218,12 @@ const Order = () => {
                     {orders &&
                       orders.map((item, index) => (
                         <tr key={index}>
-                          <th scope="row"><NavLink to={`/detail-order/${item.id}`} exact> 
-                          #OD{item.id}
-                          </NavLink></th>
-                          <th>{item.modifyDate}</th>
+                          <th scope="row">
+                            <NavLink to={`/detail-order/${item.id}`} exact>
+                              #OD{item.id}
+                            </NavLink>
+                          </th>
+                          <th>{item.createDate}</th>
                           <th>
                             <Badge
                               type={pendingStatus[item.isPending]}
@@ -252,7 +292,9 @@ const Order = () => {
                             </div>
                           </th>
                           <th>
-                            {item.orderStatus.id !== 4 && item.orderStatus.id !== 3 && item.orderStatus.id !== 2 ? (
+                            {item.orderStatus.id !== 4 &&
+                            item.orderStatus.id !== 3 &&
+                            item.orderStatus.id !== 2 ? (
                               <NavLink to={`/order-detail/${item.id}`} exact>
                                 <i
                                   className="fa fa-pencil-square-o"

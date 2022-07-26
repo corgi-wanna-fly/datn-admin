@@ -23,6 +23,7 @@
         "route": "/orders",
         "add": "/add-order",
         "modify": "/order-detail",
+        "sub": "/detail-order",
         "icon": "bx bx-cart"
     },
     {

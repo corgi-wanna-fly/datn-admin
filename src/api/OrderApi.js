@@ -17,6 +17,11 @@ export const getAllOrder = (id, status) =>{
     return Instance.get(url);
 }
 
+export const getOrderByOrderStatusAndYearAndMonth = (status, year, month, page, size) =>{
+    const url = `api/site/page-orders-by-year-and-month?id=${status}&year=${year}&month=${month}&page=${page}&size=${size}`;
+    return Instance.get(url);
+}
+
 export const getAllOrderAndPagination = (status, page, size) =>{
     const url = `api/site/get-orders-and-pagination?page=${page}&size=${size}&status=${status}`;
     return Instance.get(url);
