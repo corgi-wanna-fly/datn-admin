@@ -27,5 +27,9 @@ export const updateAccount = (data) =>{
     const url = `/api/site/account/update`;
     return Instance.post(url, data);
 }
+export const countAccount = () =>{
+    const url = `api/site/count-account`;
+    return Instance.get(url);
+}
 
 

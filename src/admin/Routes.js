@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Switch, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Account from "./account/Account";
@@ -22,8 +22,19 @@ import EditSale from "./sale/EditSale";
 import EditAccount from './account/EditAccount';
 import OrderDetail from "./pages/OrderDetail";
 import EditProduct from "./product/EditProduct";
+import ReportProduct from "./report/ReportProduct";
+import OrderProduct from "./report/OrderProduct";
+import ReportYear from "./report/ReportYear";
+import ReportMonth from "./report/ReportMonth";
+import OrderMonth from "./report/OrderMonth";
+import Upload from "./pages/Upload";
+import Detail from "./product/Detail";
 
 const Routes = () => {
+  const [year, setYear] = useState();
+  const yearHandler = (value) =>{
+    setYear(value);
+  }
   return (
     <Switch>
       <Route path="/" exact component={Dashboard} />
@@ -89,6 +100,27 @@ const Routes = () => {
       </Route>
       <Route path={`/sale-detail/:id`} exact>
         <EditSale></EditSale>
+      </Route>
+      <Route path={`/report-product`} exact>
+        <ReportProduct></ReportProduct>
+      </Route>
+      <Route path={`/order-product/:id`} exact>
+        <OrderProduct></OrderProduct>
+      </Route>
+      <Route path={`/report-year`} exact>
+        <ReportYear></ReportYear>
+      </Route>
+      <Route path={`/report-month/:id`} exact>
+        <ReportMonth yearHandler={yearHandler}></ReportMonth>
+      </Route>
+      <Route path={`/order-month/:id`} exact>
+        <OrderMonth year={year}></OrderMonth>
+      </Route>
+      <Route path={`/upload`} exact>
+        <Upload></Upload>
+      </Route>
+      <Route path={`/product-view/:id`} exact>
+        <Detail></Detail>
       </Route>
     </Switch>
   );

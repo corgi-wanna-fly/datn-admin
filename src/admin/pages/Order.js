@@ -3,7 +3,8 @@ import { NavLink } from "react-router-dom";
 import {
   getAllOrderAndPagination,
   updateOrderWithStatus,
-  getOrderByOrderStatusAndYearAndMonth
+  getOrderByOrderStatusAndYearAndMonth,
+  getOrderByOrderStatusBetweenDate,
 } from "../../api/OrderApi";
 import "../table/table.css";
 import Badge from "../badge/Badge";
@@ -43,7 +44,8 @@ const Order = () => {
   const [total, setTotal] = useState();
   const [page, setPage] = useState(1);
   const [year, setYear] = useState(2022);
-
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   var rows = new Array(total).fill(0).map((zero, index) => (
     <li
@@ -67,7 +69,6 @@ const Order = () => {
     onLoad();
   }, [page]);
 
-  
   const onLoad = () => {
     getAllOrderAndPagination(status, page, 8)
       .then((res) => {
@@ -111,20 +112,42 @@ const Order = () => {
       .catch((error) => console.log(error.response.data.Errors));
   };
 
-  const getAllOrderByOrderStatusAndYearAndMonth = (value) =>{
-    console.log(year + "-" + value);
+  const getAllOrderByOrderStatusAndYearAndMonth = (value) => {
+    setFrom('');
+    setTo('');
     getOrderByOrderStatusAndYearAndMonth(status, year, value, page, 8)
-    .then((res) => {
-      setOrders(res.data.content);
-      setTotal(res.data.totalPages);
-    })
-    .catch((error) => console.log(error.response.data.Errors));
-  }
+      .then((res) => {
+        setOrders(res.data.content);
+        setTotal(res.data.totalPages);
+      })
+      .catch((error) => console.log(error.response.data.Errors));
+  };
 
-  const changeYearHandler = (value) =>{
-    console.log(value);
+  const changeYearHandler = (value) => {
     setYear(value);
-  }
+  };
+
+  const searchHandler = () => {
+    if (from.length === 0 || to.length === 0) {
+      toast.warning("Chọn ngày cần tìm kiếm.");
+    } else {
+      if (from > to) {
+        toast.warning("Chọn ngày tìm kiếm không hợp lệ.");
+      } else {
+        let a = from.split("-");
+        let strFrom = a[2] + "-" + a[1] + "-" + a[0];
+        let b = to.split("-");
+        let strTo = b[2] + "-" + b[1] + "-" + b[0];
+        console.log(strFrom + " " + strTo);
+        getOrderByOrderStatusBetweenDate(status, strFrom, strTo, page, 8)
+          .then((res) => {
+            setOrders(res.data.content);
+            setTotal(res.data.totalPages);
+          })
+          .catch((error) => console.log(error.response.data.Errors));
+      }
+    }
+  };
   return (
     <div className="col-12">
       <div className="card">
@@ -147,35 +170,67 @@ const Order = () => {
             </select>
           </div>
           <div className="col-sm-4 mt-2">
-            <select className="form-control" onChange={(e) => changeYearHandler(e.target.value)}>
-            <option selected disabled hidden>Chọn năm</option>
+            <select
+              className="form-control"
+              onChange={(e) => changeYearHandler(e.target.value)}
+            >
+              <option selected disabled hidden>
+                Chọn năm
+              </option>
               <option value="2019">2019</option>
               <option value="2021">2021</option>
               <option value="2022">2022</option>
             </select>
           </div>
           <div className="col-sm-4 mt-2">
-            <select className="form-control" onChange={(e) => getAllOrderByOrderStatusAndYearAndMonth(e.target.value)}>
-            <option selected disabled hidden>Chọn tháng</option>
-              {month && month.map((item, index) => (
-                <option key={index} value={item}>Tháng {item}</option>
-              ))}
+            <select
+              className="form-control"
+              onChange={(e) =>
+                getAllOrderByOrderStatusAndYearAndMonth(e.target.value)
+              }
+            >
+              <option selected disabled hidden>
+                Chọn tháng
+              </option>
+              {month &&
+                month.map((item, index) => (
+                  <option key={index} value={item}>
+                    Tháng {item}
+                  </option>
+                ))}
             </select>
           </div>
         </div>
         <div className="row">
           <div className="col-sm-4 mt-2">
-            <input type="date" name="" id="" className="border" />
+            <input
+              type="date"
+              name=""
+              id=""
+              className="border"
+              onChange={(e) => setFrom(e.target.value)}
+              value={from}
+            />
           </div>
 
           <div className="col-sm-4 mt-2">
-            <input type="date" name="" id="" className="border" />
+            <input
+              type="date"
+              name=""
+              id=""
+              className="border"
+              onChange={(e) => setTo(e.target.value)}
+              value={to}
+            />
           </div>
-          <button className="btn btn-primary mt-2">Tìm kiếm</button>
+          <button
+            className="btn btn-primary mt-2"
+            onClick={() => searchHandler()}
+          >
+            Tìm kiếm
+          </button>
         </div>
-        <div className="row">
-          
-        </div>
+        <div className="row"></div>
         <div className="card__body">
           {orders && (
             <div>

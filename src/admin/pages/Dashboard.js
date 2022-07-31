@@ -1,122 +1,107 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import statusCards from "../../assets/JsonData/status-card-data.json";
 import StatusCard from "../status-card/StatusCard";
 import Chart from "react-apexcharts";
 import { Link } from "react-router-dom";
-import MiniTable from "../table/MiniTable";
-
-
-const chartOptions = {
-  series: [
-    {
-      name: "Online Customers",
-      data: [40, 70, 20, 90, 36, 80, 30, 91, 60],
-    },
-    {
-      name: "Store Customers",
-      data: [40, 30, 70, 80, 40, 16, 40, 20, 51, 10],
-    },
-  ],
-  options: {
-    color: ["#6ab04c", "#2980b9"],
-    chart: {
-      background: "transparent",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-      ],
-    },
-    legend: {
-      position: "top",
-    },
-    grid: {
-      show: false,
-    },
-  },
-};
-
-const topCustomers = {
-  head: ["user", "total orders", "total spending"],
-  body: [
-    {
-      username: "Xuân Tân",
-      order: "490",
-      price: "$15,870",
-    },
-    {
-      username: "Công Minh",
-      order: "250",
-      price: "$12,251",
-    },
-    {
-      username: "Văn Đài",
-      order: "120",
-      price: "$10,840",
-    },
-    {
-      username: "Hoàng Hưng",
-      order: "110",
-      price: "$9,251",
-    },
-    {
-      username: "Hà Tuấn",
-      order: "80",
-      price: "$8,840",
-    },
-  ],
-};
-
-const renderCusomerHead = (item, index) => <th key={index}>{item}</th>;
-
-const renderCusomerBody = (item, index) => (
-  <tr key={index}>
-    <td>{item.username}</td>
-    <td>{item.order}</td>
-    <td>{item.price}</td>
-  </tr>
-);
+import {
+  reportByProduct,
+  reportAmountYear,
+  countOrder,
+  countOrderByName
+} from "../../api/OrderApi";
+import {countAccount} from '../../api/AccountApi';
+import {countProduct} from '../../api/ProductApi';
 
 const Dashboard = () => {
+  const [product, setProduct] = useState([]);
+  const [year, setYear] = useState([]);
+  const [countOr, setCountOr] = useState();
+  const [total, setTotal] = useState();
+  const [countAcc, setCountAcc] = useState();
+  const [countPro, setCountPro] = useState();
+  const [seri, setSeri] = useState([]);
+  const [lbl, setLbl] = useState({});
+  const [option, setOption] = useState({});
+
+  useEffect(() => {
+    reportByProduct(1, 8)
+      .then((resp) => {
+        setProduct(resp.data.content);
+      })
+      .catch((error) => console.log(error));
+
+    reportAmountYear()
+      .then((resp) => {
+        setYear(resp.data);
+        const result = resp.data.reduce(
+          (price, item) =>
+            price + item.total,
+          0
+        );
+        setTotal(result);
+      })
+      .catch((error) => console.log(error));
+
+    countOrder()
+      .then((resp) => setCountOr(resp.data))
+      .catch((error) => console.log(error));
+
+      countAccount()
+      .then((resp) => setCountAcc(resp.data))
+      .catch((error) => console.log(error));
+
+      countProduct()
+      .then((resp) => setCountPro(resp.data))
+      .catch((error) => console.log(error));
+
+      countOrderByName()
+      .then((resp) =>{
+          const x = resp.data.map((item) => item.name);
+          setOption({
+            labels: x
+          });
+          const y = resp.data.map((item) => item.count);
+          setSeri(y);
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
   return (
     <div>
-      <h2 className="page-header">Dashboard</h2>
+      <h2 className="page-header">Thống kê</h2>
       <div className="row">
         <div className="col-6">
-          <div className="row">
-            {statusCards.map((item, index) => (
-              <div className="col-6" key={index}>
-                {
-                  <StatusCard
-                    icon={item.icon}
-                    count={item.count}
-                    title={item.title}
-                  />
-                }
-              </div>
-            ))}
+          <div className="row container-fluid">
+            <div className="col">
+              <StatusCard
+                icon={statusCards[0].icon}
+                count={countAcc}
+                title={`Khách hàng`}
+              />
+              <StatusCard
+                icon={statusCards[1].icon}
+                count={countPro}
+                title={`Sản phẩm`}
+              />
+              <StatusCard
+                icon={statusCards[3].icon}
+                count={countOr}
+                title={`Đơn hàng`}
+              />
+              <StatusCard
+                icon={statusCards[2].icon}
+                count={total && total.toLocaleString()}
+                title={`Tổng doanh thu`}
+              />
+            </div>
           </div>
         </div>
         <div className="col-6">
           <div className="card full-height">
             <Chart
-              options={chartOptions.options}
-              series={chartOptions.series}
-              type="line"
+              options={option}
+              series={seri}
+              type="donut"
               height="100%"
             />
           </div>
@@ -124,39 +109,69 @@ const Dashboard = () => {
         <div className="col-6">
           <div className="card">
             <div className="card__header">
-              <h3>top customers</h3>
+              <h3 className="text-primary">Doanh thu theo sản phẩm</h3>
             </div>
             <div className="card__body">
-              <MiniTable
-                headData={topCustomers.head}
-                renderHead={(item, index) => renderCusomerHead(item, index)}
-                bodyData={topCustomers.body}
-                renderBody={(item, index) => renderCusomerBody(item, index)}
-              />
+              <table className="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Mã sản phẩm</th>
+                    <th scope="col">Tên sản phẩm</th>
+                    <th scope="col">Size</th>
+                    <th scope="col">Doanh thu</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {product &&
+                    product.map((item, index) => (
+                      <tr key={index}>
+                        <th scope="row">{item.id}</th>
+                        <td>{item.name}</td>
+                        <td>{item.size}</td>
+                        <td>{item.amount.toLocaleString()} đ</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
             </div>
             <div className="card__footer">
-              <Link to="/">view all</Link>
+              <Link to="/report-product">Xem chi tiết</Link>
             </div>
           </div>
-        </div>  
+        </div>
         <div className="col-6">
           <div className="card">
             <div className="card__header">
-              <h3>top products</h3>
+              <h3 className="text-primary">Doanh thu theo Năm</h3>
             </div>
             <div className="card__body">
-              <MiniTable
-                headData={topCustomers.head}
-                renderHead={(item, index) => renderCusomerHead(item, index)}
-                bodyData={topCustomers.body}
-                renderBody={(item, index) => renderCusomerBody(item, index)}
-              />
+              <table className="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Năm</th>
+                    <th scope="col">Số lượng đơn</th>
+                    <th scope="col">Doanh thu</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {year &&
+                    year.map((item, index) => (
+                      <tr key={index}>
+                        <th scope="row">{index + 1}</th>
+                        <td>{item.year}</td>
+                        <td>{item.count}</td>
+                        <td>{item.total && item.total.toLocaleString()} đ</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
             </div>
             <div className="card__footer">
-              <Link to="/">view all</Link>
+              <Link to="/report-year">Xem chi tiết</Link>
             </div>
           </div>
-        </div>       
+        </div>
       </div>
     </div>
   );

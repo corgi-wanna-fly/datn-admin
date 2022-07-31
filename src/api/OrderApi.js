@@ -22,6 +22,11 @@ export const getOrderByOrderStatusAndYearAndMonth = (status, year, month, page, 
     return Instance.get(url);
 }
 
+export const getOrderByOrderStatusBetweenDate = (status, from, to, page, size) =>{
+    const url = `api/site/page-orders-between-date?id=${status}&from=${from}&to=${to}&page=${page}&size=${size}`;
+    return Instance.get(url);
+}
+
 export const getAllOrderAndPagination = (status, page, size) =>{
     const url = `api/site/get-orders-and-pagination?page=${page}&size=${size}&status=${status}`;
     return Instance.get(url);
@@ -42,3 +47,32 @@ export const updateOrderWithStatus = (orderId, statusId) =>{
     return Instance.get(url);
 }
 
+export const reportByProduct = (page, size) =>{
+    const url = `api/site/page-report-product?page=${page}&size=${size}`;
+    return Instance.get(url);
+}
+
+export const getOrderByProduct = (id, page, size) =>{
+    const url = `api/site/page-orders-by-product?id=${id}&page=${page}&size=${size}`;
+    return Instance.get(url);
+}
+
+export const reportAmountYear = () =>{
+    const url = `api/site/amount-year`;
+    return Instance.get(url);
+}
+
+export const reportAmountMonth = (year) =>{
+    const url = `api/site/amount-month?year=${year}`;
+    return Instance.get(url);
+}
+
+export const countOrder = () =>{
+    const url = `api/site/count-order`;
+    return Instance.get(url);
+}
+
+export const countOrderByName = () =>{
+    const url = `api/site/count-order-by-name`;
+    return Instance.get(url);
+}

@@ -9,3 +9,7 @@ export const backAttribute = (data) =>{
     const url = `api/site/back-attribute`;
     return Instance.post(url, data);
 }
+export const getAttribute = (id, size) =>{
+    const url = `api/site/get-by-product?id=${id}&size=${size}`;
+    return Instance.get(url);
+}

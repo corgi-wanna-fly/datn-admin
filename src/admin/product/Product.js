@@ -1,33 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { getAllProducts, getTotalPage } from "../../api/ProductApi";
+import { getAllProductsByBrand } from "../../api/ProductApi";
 import { NavLink } from "react-router-dom";
+import { getBrands } from "../../api/BrandApi";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState({});
-  const [active, setActive] = useState(true);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = (orderId, statusId) => {
-    setShow(true);
-    // setObj({
-    //   orderId: orderId,
-    //   statusId: statusId,
-    // });
-  };
+  const [brand, setBrand] = useState([]);
 
   useEffect(() => {
     onLoad();
   }, [page]);
 
   const onLoad = () => {
-    getAllProducts(page, 9, active).then((response) =>
-      setProducts(response.data)
-    );
-    getTotalPage().then((res) => setTotal(res.data));
+    getAllProductsByBrand(0, page, 10, true).then((response) => {
+      setProducts(response.data.content);
+      setTotal(response.data.totalPages);
+    });
+
+    getBrands(1, 20)
+      .then((resp) => setBrand(resp.data.content))
+      .catch((error) => console.log(error));
   };
 
   const onChangePage = (page) => {
@@ -48,34 +46,45 @@ const Product = () => {
       </button>
     </li>
   ));
+
+  const getProductByBrandHandler = (value) => {
+    if (value == 0) {
+      onLoad();
+    } else {
+      getAllProductsByBrand(value, 1, 10, true)
+        .then((resp) => {
+          setProducts(resp.data.content);
+          setTotal(resp.data.totalPages);
+        })
+        .catch((error) => console.log(error));
+    }
+  };
   return (
     <div className="col-12">
       <div className="card">
         <div className="card__header">
-          <NavLink to="/add-product" className="btn btn-primary" style={{ borderRadius: 50 }}>Thêm sản phẩm</NavLink>
+          <NavLink
+            to="/add-product"
+            className="btn btn-primary"
+            style={{ borderRadius: 50 }}
+          >
+            Thêm sản phẩm
+          </NavLink>
         </div>
         <div className="row mb-3 mt-3">
-          <div className="form-check form-check-inline mr-5 ml-4">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="inlineRadioOptions"
-              value="0"
-              onChange={""}
-              checked={true}
-            />
-            <label className="form-check-label">Đang bán</label>
-          </div>
-          <div className="form-check form-check-inline mr-5 ml-2">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="inlineRadioOptions"
-              value="1"
-              onChange={""}
-              checked={false}
-            />
-            <label className="form-check-label">Dừng bán</label>
+          <div className="col-sm-4 mt-2">
+            <select
+              className="form-control"
+              onChange={(event) => getProductByBrandHandler(event.target.value)}
+            >
+              <option value="0">Tất cả</option>
+              {brand &&
+                brand.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+            </select>
           </div>
         </div>
         <div className="card__body">
@@ -97,7 +106,11 @@ const Product = () => {
                   {products &&
                     products.map((item, index) => (
                       <tr key={index}>
-                        <th scope="row">#{index + 1}</th>
+                        <th scope="row">
+                          <NavLink to={`/product-view/${item.id}`} exact>
+                            SP000{index + 1}
+                          </NavLink>
+                        </th>
                         <th>{item.name}</th>
                         <th>{item.code}</th>
                         <th>{item.brand}</th>
@@ -110,7 +123,7 @@ const Product = () => {
                             alt=""
                           />
                         </th>
-                        <th>{item.isActive ? "Đang bán" : "Dừng bán"}</th>
+                        <th>{item.active ? "Đang bán" : "Dừng bán"}</th>
                         <th>
                           <NavLink to={`/product-detail/${item.id}`} exact>
                             <i

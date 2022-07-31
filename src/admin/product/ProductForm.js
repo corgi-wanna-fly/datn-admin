@@ -1,9 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import "../image/CardProfile.css";
+import { getBrands } from "../../api/BrandApi";
+import { getSale } from "../../api/SaleApi";
+import { getCategory } from "../../api/CategoryApi";
+import logo from "../../assets/images/logo-sneaker.jpg";
+import { createProduct } from "../../api/ProductApi";
+import { toast } from "react-toastify";
+import { useHistory } from "react-router-dom";
+import { upload } from "../services/upload-files.service";
 
 const ProductForm = () => {
   const [count, setCount] = useState(1);
+  const [brand, setBrand] = useState([]);
+  const [sale, setSale] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [image, setImage] = useState([]);
+
+  const history = useHistory();
+
+  useEffect(() => {
+    getBrands(1, 20)
+      .then((resp) => setBrand(resp.data.content))
+      .catch((error) => console.log(error));
+
+    getSale(1, 8)
+      .then((resp) => setSale(resp.data.content))
+      .catch((error) => console.log(error));
+
+    getCategory(1, 20)
+      .then((resp) => setCategory(resp.data.content))
+      .catch((error) => console.log(error));
+  }, []);
 
   const {
     register,
@@ -11,15 +39,59 @@ const ProductForm = () => {
     formState: { errors },
   } = useForm();
 
-  const submitHandler = (data) => {
-    const flag = {
-      brandId: data.brand,
-      categoryId: data.category,
-      code: data.code,
-      description: data.description,
+  const onFileChange = (event) => {
+    const images = Array.from(event.target.files);
+    console.log(images);
+    setImage(images);
+  };
 
+  const submitHandler = (data) => {
+    if (image.length !== 6) {
+      toast.warning("Cần tải lên 6 bức ảnh");
+    } else {
+      const flag = {
+        name: data.name,
+        code: data.code,
+        description: data.description,
+        brandId: data.brand,
+        saleId: data.sale,
+        categoryId: data.category,
+        imageUrl: image.map((item) => item.name),
+        attribute: [
+          {
+            size: data.size1,
+            price: data.price1,
+            stock: data.quantity1,
+          },
+          {
+            size: data.size2,
+            price: data.price2,
+            stock: data.quantity2,
+          },
+          {
+            size: data.size3,
+            price: data.price3,
+            stock: data.quantity3,
+          },
+          {
+            size: data.size4,
+            price: data.price4,
+            stock: data.quantity4,
+          },
+        ].slice(0, count),
+      };
+      createProduct(flag)
+      .then(() => {
+        image.forEach((item) => {
+          upload(item)
+          .then((resp) => console.log(resp.data))
+          .catch((error) => console.log(error.response.data));
+        })
+        toast.success("Thêm mới sản phẩm thành công");
+        history.push("/products");
+      })
+      .catch((error) => toast.error(error.response.data.Errors))
     }
-    console.log(flag);
   };
 
   const changeCountHandler = (value) => {
@@ -48,7 +120,7 @@ const ProductForm = () => {
                     pattern: /^\s*\S+.*/,
                   })}
                 />
-                {errors.fullname && (
+                {errors.name && (
                   <div className="alert alert-danger" role="alert">
                     Tên sản phẩm không hợp lệ!
                   </div>
@@ -64,7 +136,7 @@ const ProductForm = () => {
                     pattern: /^\s*\S+.*/,
                   })}
                 />
-                {errors.phone && (
+                {errors.code && (
                   <div className="alert alert-danger" role="alert">
                     Code không hợp lệ!
                   </div>
@@ -81,6 +153,11 @@ const ProductForm = () => {
                     pattern: /^\s*\S+.*/,
                   })}
                 />
+                {errors.description && (
+                  <div className="alert alert-danger" role="alert">
+                    Mô tả không hợp lệ!
+                  </div>
+                )}
               </div>
               <div className="col-sm-6 mt-5">
                 <label className="form-label">Thương hiệu</label>
@@ -88,8 +165,12 @@ const ProductForm = () => {
                   className="form-control"
                   {...register("brand", { required: true })}
                 >
-                  <option value="1">Adidas</option>
-                  <option value="2">Nike</option>
+                  {brand &&
+                    brand.map((item, index) => (
+                      <option value={item.id} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
                 </select>
               </div>
               <div className="col-sm-6 mt-5">
@@ -98,49 +179,32 @@ const ProductForm = () => {
                   className="form-control"
                   {...register("sale", { required: true })}
                 >
-                  <option value="1">Mặc định</option>
-                  <option value="2">Black Friday</option>
-                  <option value="3">8/3</option>
+                  {sale &&
+                    sale.map((item, index) => (
+                      <option
+                        value={item.id}
+                        key={index}
+                        selected={item.id === 1}
+                      >
+                        {item.name} - {item.discount} %
+                      </option>
+                    ))}
                 </select>
               </div>
               <div className="col-12 mt-5">
                 <label className="form-label mb-3">Loại sản phẩm</label> <br />
-                <div class="form-check form-check-inline mr-5">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="1"
-                    {...register("category", { required: true })}
-                  />
-                  <label class="form-check-label">Giày nam</label>
-                </div>
-                <div class="form-check form-check-inline mr-5">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="2"
-                    {...register("category", { required: true })}
-                  />
-                  <label class="form-check-label">Giày nữ</label>
-                </div>
-                <div class="form-check form-check-inline mr-5">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="3"
-                    {...register("category", { required: true })}
-                  />
-                  <label class="form-check-label">Giày bóng đá</label>
-                </div>
-                <div class="form-check form-check-inline mr-5">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="4"
-                    {...register("category", { required: true })}
-                  />
-                  <label class="form-check-label">Giày bóng rổ</label>
-                </div>
+                {category &&
+                  category.map((item, index) => (
+                    <div class="col-2 form-check form-check-inline mr-5" key={index}>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value={item.id}
+                        {...register("category", { required: true })}
+                      />
+                      <label class="form-check-label">{item.name}</label>
+                    </div>
+                  ))}
               </div>
               <div className="col-12 mt-5">
                 <label className="form-label mb-5">Hình ảnh sản phẩm</label>{" "}
@@ -152,24 +216,30 @@ const ProductForm = () => {
                   >
                     <label className="custom-file-upload fas">
                       <div className="img-wrap img-upload">
-                        <img
-                          alt=""
-                          src={""}
-                        />
+                        <img alt="" src={logo} />
                       </div>
                       <input
                         id="photo-upload"
                         type="file"
-                        {...register("image-1", { required: true })}
+                        multiple
+                        onChange={(e) => onFileChange(e)}
                       />
                     </label>
-                  </div>              
+                  </div>
+                  <div className="col">
+                    {image &&
+                      image.map((item, index) => (
+                        <span class="badge badge-primary" key={index}>
+                          {item.name}
+                        </span>
+                      ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <div className="col-10 row">
-           <div className="card mr-5 col-10">
+            <div className="card mr-5 col-10">
               <h4 className="d-flex justify-content-between align-items-center mb-1">
                 <span className="text-dark">Chi tiết sản phẩm</span> <br />
               </h4>

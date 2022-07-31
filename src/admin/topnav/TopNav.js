@@ -38,7 +38,7 @@ const renderUserMenu =(item, index) => (
     </Link>
 )
 const TopNav = () => {
-  return (
+  return ( 
     <div className='topnav'>
     <div className="topnav__search">
         <input type="text" placeholder='Search here...' />
