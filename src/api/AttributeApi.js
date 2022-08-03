@@ -10,6 +10,6 @@ export const backAttribute = (data) =>{
     return Instance.post(url, data);
 }
 export const getAttribute = (id, size) =>{
-    const url = `api/site/get-by-product?id=${id}&size=${size}`;
+    const url = `api/site/attribute/get-by-product?id=${id}&size=${size}`;
     return Instance.get(url);
 }

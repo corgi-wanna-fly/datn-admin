@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import statusCards from "../../assets/JsonData/status-card-data.json";
 import StatusCard from "../status-card/StatusCard";
 import Chart from "react-apexcharts";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   reportByProduct,
   reportAmountYear,
   countOrder,
-  countOrderByName
+  countOrderByName,
 } from "../../api/OrderApi";
-import {countAccount} from '../../api/AccountApi';
-import {countProduct} from '../../api/ProductApi';
+import { countAccount } from "../../api/AccountApi";
+import { countProduct } from "../../api/ProductApi";
 
 const Dashboard = () => {
   const [product, setProduct] = useState([]);
@@ -20,7 +20,6 @@ const Dashboard = () => {
   const [countAcc, setCountAcc] = useState();
   const [countPro, setCountPro] = useState();
   const [seri, setSeri] = useState([]);
-  const [lbl, setLbl] = useState({});
   const [option, setOption] = useState({});
 
   useEffect(() => {
@@ -33,11 +32,7 @@ const Dashboard = () => {
     reportAmountYear()
       .then((resp) => {
         setYear(resp.data);
-        const result = resp.data.reduce(
-          (price, item) =>
-            price + item.total,
-          0
-        );
+        const result = resp.data.reduce((price, item) => price + item.total, 0);
         setTotal(result);
       })
       .catch((error) => console.log(error));
@@ -46,22 +41,22 @@ const Dashboard = () => {
       .then((resp) => setCountOr(resp.data))
       .catch((error) => console.log(error));
 
-      countAccount()
+    countAccount()
       .then((resp) => setCountAcc(resp.data))
       .catch((error) => console.log(error));
 
-      countProduct()
+    countProduct()
       .then((resp) => setCountPro(resp.data))
       .catch((error) => console.log(error));
 
-      countOrderByName()
-      .then((resp) =>{
-          const x = resp.data.map((item) => item.name);
-          setOption({
-            labels: x
-          });
-          const y = resp.data.map((item) => item.count);
-          setSeri(y);
+    countOrderByName()
+      .then((resp) => {
+        const x = resp.data.map((item) => item.name);
+        setOption({
+          labels: x,
+        });
+        const y = resp.data.map((item) => item.count);
+        setSeri(y);
       })
       .catch((error) => console.log(error));
   }, []);
@@ -98,12 +93,7 @@ const Dashboard = () => {
         </div>
         <div className="col-6">
           <div className="card full-height">
-            <Chart
-              options={option}
-              series={seri}
-              type="donut"
-              height="100%"
-            />
+            <Chart options={option} series={seri} type="donut" height="100%" />
           </div>
         </div>
         <div className="col-6">
@@ -117,7 +107,7 @@ const Dashboard = () => {
                   <tr>
                     <th scope="col">Mã sản phẩm</th>
                     <th scope="col">Tên sản phẩm</th>
-                    <th scope="col">Size</th>
+                    <th scope="col">Số lượng bán</th>
                     <th scope="col">Doanh thu</th>
                   </tr>
                 </thead>
@@ -125,9 +115,14 @@ const Dashboard = () => {
                   {product &&
                     product.map((item, index) => (
                       <tr key={index}>
-                        <th scope="row">{item.id}</th>
+                        <th scope="row">
+                          <NavLink to={`/order-product/${item.id}`} exact>
+                            {" "}
+                            {item.id}
+                          </NavLink>
+                        </th>
                         <td>{item.name}</td>
-                        <td>{item.size}</td>
+                        <td>{item.count}</td>
                         <td>{item.amount.toLocaleString()} đ</td>
                       </tr>
                     ))}
@@ -158,7 +153,11 @@ const Dashboard = () => {
                   {year &&
                     year.map((item, index) => (
                       <tr key={index}>
-                        <th scope="row">{index + 1}</th>
+                        <th scope="row">
+                          <NavLink exact to={`/report-month/${item.year}`}>
+                            {index + 1}
+                          </NavLink>
+                        </th>
                         <td>{item.year}</td>
                         <td>{item.count}</td>
                         <td>{item.total && item.total.toLocaleString()} đ</td>
@@ -168,7 +167,9 @@ const Dashboard = () => {
               </table>
             </div>
             <div className="card__footer">
-              <Link to="/report-year">Xem chi tiết</Link>
+              <NavLink exact to={`/report-month/2022`}>
+                Xem chi tiết
+              </NavLink>
             </div>
           </div>
         </div>

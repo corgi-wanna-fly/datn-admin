@@ -1,34 +1,34 @@
 import Instance from '../axios/Instance'
 
 export const getAccountDetailByAccountId = (id) =>{
-    const url = `/api/site/account/${id}`;
+    const url = `/api/site/account/detail/${id}`;
     return Instance.get(url);
 }
 export const getAccounts = (page, size) =>{
-    const url = `/api/site/accounts?page=${page}&size=${size}`;
+    const url = `/api/admin/account/find-all?page=${page}&size=${size}`;
     return Instance.get(url);
 }
 export const getAccountByRole = (page, size, role) =>{
-    const url = `/api/site/account?page=${page}&size=${size}&roleName=${role}`;
+    const url = `/api/admin/account/by-role?page=${page}&size=${size}&roleName=${role}`;
     return Instance.get(url);
 }
 
 export const getTotalPage = () =>{
-    const url = `/api/site/account/get-total-page`;
+    const url = `/api/admin/account/get-total-page`;
     return Instance.get(url);
 }
 
 export const createAccount = (data) =>{
-    const url = `/api/site/account/create`;
+    const url = `/api/admin/account/create`;
     return Instance.post(url, data);
 }
 
 export const updateAccount = (data) =>{
-    const url = `/api/site/account/update`;
+    const url = `/api/admin/account/update`;
     return Instance.post(url, data);
 }
 export const countAccount = () =>{
-    const url = `api/site/count-account`;
+    const url = `/api/admin/account/count`;
     return Instance.get(url);
 }
 

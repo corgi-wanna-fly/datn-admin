@@ -24,7 +24,6 @@ import OrderDetail from "./pages/OrderDetail";
 import EditProduct from "./product/EditProduct";
 import ReportProduct from "./report/ReportProduct";
 import OrderProduct from "./report/OrderProduct";
-import ReportYear from "./report/ReportYear";
 import ReportMonth from "./report/ReportMonth";
 import OrderMonth from "./report/OrderMonth";
 import Upload from "./pages/Upload";
@@ -106,9 +105,6 @@ const Routes = () => {
       </Route>
       <Route path={`/order-product/:id`} exact>
         <OrderProduct></OrderProduct>
-      </Route>
-      <Route path={`/report-year`} exact>
-        <ReportYear></ReportYear>
       </Route>
       <Route path={`/report-month/:id`} exact>
         <ReportMonth yearHandler={yearHandler}></ReportMonth>

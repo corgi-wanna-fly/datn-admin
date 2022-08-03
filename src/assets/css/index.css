@@ -205,4 +205,6 @@ input:focus {
     margin-left: 70%;
  }
  
- 
+ button :hover{
+    display: none;
+ }

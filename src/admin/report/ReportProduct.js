@@ -56,7 +56,6 @@ const ReportProduct = () => {
               <tr>
                 <th scope="col">Mã sản phẩm</th>
                 <th scope="col">Tên sản phẩm</th>
-                <th scope="col">Size</th>
                 <th scope="col">Số lượng bán</th>
                 <th scope="col">Số lượng đơn</th>
                 <th scope="col">Doanh thu</th>
@@ -68,7 +67,6 @@ const ReportProduct = () => {
                   <tr key={index}>
                   <th scope="row"><NavLink to={`/order-product/${item.id}`} exact> {item.id}</NavLink></th>
                     <td>{item.name}</td>
-                    <td>{item.size}</td>
                     <td>{item.quantity ? item.quantity : 0}</td>
                     <td>{item.count}</td>
                     <td>{item.amount ? item.amount : 0}</td>
