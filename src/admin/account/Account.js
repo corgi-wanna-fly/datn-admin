@@ -9,9 +9,9 @@ import {
 import Badge from "../badge/Badge";
 
 const roleName = {
-  "NHÂN VIÊN": "primary",
-  "KHÁCH HÀNG": "success",
-  ADMIN: "danger",
+  "EMP": "primary",
+  "CUS": "success",
+  "ADMIN": "danger",
 };
 
 const active = {
@@ -107,9 +107,9 @@ const Account = () => {
             className="form-check-input"
             type="radio"
             name="inlineRadioOptions"
-            value="NHÂN VIÊN"
+            value="EMP"
             onChange={(event) => getAccountByRoleHandler(event.target.value)}
-            checked={role === "NHÂN VIÊN"}
+            checked={role === "EMP"}
           />
           <label className="form-check-label">Nhân viên</label>
         </div>
@@ -118,9 +118,9 @@ const Account = () => {
             className="form-check-input"
             type="radio"
             name="inlineRadioOptions"
-            value="KHÁCH HÀNG"
+            value="CUS"
             onChange={(event) => getAccountByRoleHandler(event.target.value)}
-            checked={role === "KHÁCH HÀNG"}
+            checked={role === "CUS"}
           />
           <label className="form-check-label">Khách hàng</label>
         </div>

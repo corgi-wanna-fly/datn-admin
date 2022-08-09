@@ -6,5 +6,17 @@ const Instance = axios.create({
         "Content-Type" : "application/json"
     }
 });
+const accessToken = localStorage.getItem('token');
+  
+  Instance.interceptors.request.use(
+    config => {
+        config.headers.authorization = `Bearer ${accessToken}`;
+        return config;
+    },
+    error =>{
+        return Promise.reject(error)
+    }
+  );
+  
 
 export default Instance

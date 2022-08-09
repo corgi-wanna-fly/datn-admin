@@ -104,6 +104,7 @@ const Order = () => {
 
   const getAllOrderByStatus = (value) => {
     setStatus(value);
+    setPage(1);
     getAllOrderAndPagination(value, page, 8)
       .then((res) => {
         setOrders(res.data.content);

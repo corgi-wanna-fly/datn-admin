@@ -31,5 +31,11 @@ export const countAccount = () =>{
     const url = `/api/admin/account/count`;
     return Instance.get(url);
 }
-
-
+export const getMe = (token) =>{
+    const url = `/api/site/me?token=${token}`;
+    return Instance.get(url);
+}
+export const signIn = (data) =>{
+    const url = '/api/site/login';
+    return Instance.post(url, data);
+}

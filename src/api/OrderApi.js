@@ -53,7 +53,7 @@ export const reportByProduct = (page, size) =>{
 }
 
 export const getOrderByProduct = (id, page, size) =>{
-    const url = `api/admin/page-orders-by-product?id=${id}&page=${page}&size=${size}`;
+    const url = `api/admin/order/page-orders-by-product?id=${id}&page=${page}&size=${size}`;
     return Instance.get(url);
 }
 
@@ -68,11 +68,11 @@ export const reportAmountMonth = (year) =>{
 }
 
 export const countOrder = () =>{
-    const url = `api/admin/count-order`;
+    const url = `api/admin/order/count-order`;
     return Instance.get(url);
 }
 
 export const countOrderByName = () =>{
-    const url = `api/admin/count-order-by-name`;
+    const url = `api/admin/order/count-order-by-name`;
     return Instance.get(url);
 }
