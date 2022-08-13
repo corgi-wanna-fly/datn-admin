@@ -70,7 +70,7 @@ const Order = () => {
   }, [page]);
 
   const onLoad = () => {
-    getAllOrderAndPagination(status, page, 8)
+    getAllOrderAndPagination(status, page, 20)
       .then((res) => {
         setOrders(res.data.content);
         setTotal(res.data.totalPages);

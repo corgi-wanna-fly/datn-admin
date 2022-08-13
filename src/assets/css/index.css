@@ -64,7 +64,7 @@ a:hover {
 }
 
 button {
-    cursor: pointer;
+    /* cursor: pointer; */
     border: 0;
     outline: 0;
     color: var(--txt-color);
@@ -188,7 +188,7 @@ input:focus {
     margin-left: 10%;
 }
 
-.mini-pro:hover {
+/* .mini-pro:hover {
     border-radius: var(--border-radius);
     background-image: linear-gradient(
         to right,
@@ -196,7 +196,8 @@ input:focus {
         var(--second-color)
     );
     color: var(--txt-white);
-}
+} */
+
 .table td, th {
     text-align: center;   
  }
@@ -205,6 +206,3 @@ input:focus {
     margin-left: 70%;
  }
  
- button :hover{
-    display: none;
- }

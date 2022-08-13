@@ -53,5 +53,12 @@
         "add": "/add-brand",
         "modify": "/brand-detail",
         "icon": "bx bx-store-alt"
+    },
+    {
+        "display_name": "Hộp thoại",
+        "route": "/chat",
+        "add": "/chat",
+        "modify": "/chat",
+        "icon": "bx bx-user-pin"
     }
 ]

@@ -10,7 +10,7 @@ const SignIn = (props) => {
 
   const signInHandler = (data) => {
     const userFlag = {
-      ...data,
+      ...data, 
       admin: true,
     };
     signIn(userFlag)
@@ -20,6 +20,8 @@ const SignIn = (props) => {
         getMe(res.data.accessToken)
           .then((res) => {
             props.userHandler(res.data);
+            localStorage.setItem("username", 'admin');
+            localStorage.setItem("password", '123456');
           })
           .catch((error) => console.log(error));
         history.push("/");

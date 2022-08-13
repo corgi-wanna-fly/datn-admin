@@ -19,7 +19,7 @@ import EditCategory from "./category/EditCategory";
 import NewCategory from "./category/NewCategory";
 import NewSale from "./sale/NewSale";
 import EditSale from "./sale/EditSale";
-import EditAccount from './account/EditAccount';
+import EditAccount from "./account/EditAccount";
 import OrderDetail from "./pages/OrderDetail";
 import EditProduct from "./product/EditProduct";
 import ReportProduct from "./report/ReportProduct";
@@ -28,12 +28,13 @@ import ReportMonth from "./report/ReportMonth";
 import OrderMonth from "./report/OrderMonth";
 import Upload from "./pages/Upload";
 import Detail from "./product/Detail";
+import Chat from "./chat/Chat";
 
 const Routes = () => {
   const [year, setYear] = useState();
-  const yearHandler = (value) =>{
+  const yearHandler = (value) => {
     setYear(value);
-  }
+  };
   return (
     <Switch>
       <Route path="/" exact component={Dashboard} />
@@ -117,6 +118,12 @@ const Routes = () => {
       </Route>
       <Route path={`/product-view/:id`} exact>
         <Detail></Detail>
+      </Route>
+      <Route path={`/product-view/:id`} exact>
+        <Detail></Detail>
+      </Route>
+      <Route path={`/chat`} exact>
+        <Chat></Chat>
       </Route>
     </Switch>
   );

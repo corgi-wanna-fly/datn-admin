@@ -9,13 +9,12 @@ import { toast } from "react-toastify";
 
 const TopNav = (props) => {
   const [notifications, setNotifications] = useState([]);
-  const [noti, setNoti] = useState([]);
 
   const renderNotificationItem = (item, index) => (
     <NavLink to={`/order-detail/${item.order.id}`} exact key={index}  onClick={() => readHandler(item.id)}>
       <div className="notification-item" >
         <i className="bx bx-package"></i>
-        <span>{item.content}</span>
+        <span className={item.type === 1 ? "text-primary" : "text-danger"}>{item.content}</span>
       </div>
     </NavLink>
   );
@@ -37,7 +36,7 @@ const TopNav = (props) => {
     await pushNotification()
     .then((resp) => {
         resp.data.map((item) => (
-          toast.success(item.content)
+         item.type == 1 ? toast.success(item.content) : toast.warning(item.content)
         ))
     })
     .catch((error) => console.log(error));
@@ -58,6 +57,8 @@ const TopNav = (props) => {
 
   const signOutHandler = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("password");
     props.userHandler(null);
   };
 

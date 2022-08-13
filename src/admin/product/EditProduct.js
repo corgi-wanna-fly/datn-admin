@@ -96,7 +96,7 @@ const EditProduct = () => {
     </div>
     <div className="row card">
       <form
-        className="needs-validation"
+        className="needs-validation pro-form"
         onSubmit={handleSubmit(submitHandler)}
       >
         <div className="col-10">

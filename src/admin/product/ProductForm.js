@@ -14,7 +14,7 @@ const ProductForm = () => {
   const [count, setCount] = useState(1);
   const [brand, setBrand] = useState([]);
   const [sale, setSale] = useState([]);
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState([]); 
   const [image, setImage] = useState([]);
 
   const history = useHistory();
@@ -105,7 +105,7 @@ const ProductForm = () => {
       </div>
       <div className="row card">
         <form
-          className="needs-validation"
+          className="needs-validation pro-form"
           onSubmit={handleSubmit(submitHandler)}
         >
           <div className="col-10">
