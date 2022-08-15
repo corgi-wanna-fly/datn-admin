@@ -5,6 +5,8 @@ import {
   updateOrderWithStatus,
   getOrderByOrderStatusAndYearAndMonth,
   getOrderByOrderStatusBetweenDate,
+  getOrderById,
+  getOrderDetailByOrderId,
 } from "../../api/OrderApi";
 import "../table/table.css";
 import Badge from "../badge/Badge";
@@ -12,8 +14,10 @@ import { toast } from "react-toastify";
 import { Button, Form } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { getAllOrderStatus } from "../../api/OrderStatusApi";
+import Alert from "react-bootstrap/Alert";
 
 const orderStatus = {
+  "Chờ xác nhận": "secondary",
   "Đang xử lí": "primary",
   "Đang vận chuyển": "warning",
   "Đã giao": "success",
@@ -29,10 +33,52 @@ const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = (orderId, statusId) => {
-    setShow(true);
+  const [showFirst, setShowFirst] = useState(false);
+  const [showSecond, setShowSecond] = useState(false);
+  const [showThird, setShowThird] = useState(false);
+  const [showFouth, setShowFouth] = useState(false);
+
+  const handleCloseFirst = () => setShowFirst(false);
+  const handleShowFirst = (orderId, statusId) => {
+    getOrderById(orderId)
+      .then((resp) => setTemp(resp.data))
+      .catch((error) => console.log(error));
+
+    getOrderDetailByOrderId(orderId)
+      .then((resp) => setAttribute(resp.data))
+      .catch((error) => console.log(error));
+
+    setShowFirst(true);
+    setObj({
+      orderId: orderId,
+      statusId: statusId,
+    });
+  };
+
+  const handleCloseSecond = () => setShowSecond(false);
+  const handleShowSecond = (orderId, statusId) => {
+    setShowSecond(true);
+    setObj({
+      orderId: orderId,
+      statusId: statusId,
+    });
+  };
+
+  const handleCloseThird = () => setShowThird(false);
+  const handleShowThird = (orderId, statusId) => {
+    getOrderById(orderId)
+      .then((resp) => setTemp(resp.data))
+      .catch((error) => console.log(error));
+    setShowThird(true);
+    setObj({
+      orderId: orderId,
+      statusId: statusId,
+    });
+  };
+
+  const handleCloseFouth = () => setShowFouth(false);
+  const handleShowFouth = (orderId, statusId) => {
+    setShowFouth(true);
     setObj({
       orderId: orderId,
       statusId: statusId,
@@ -46,6 +92,8 @@ const Order = () => {
   const [year, setYear] = useState(2022);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [temp, setTemp] = useState();
+  const [attribute, setAttribute] = useState([]);
 
   var rows = new Array(total).fill(0).map((zero, index) => (
     <li
@@ -81,8 +129,20 @@ const Order = () => {
       .catch((error) => console.log(error.response.data.Errors));
   };
 
-  const updateStatusHandler = (orderId, statusId) => {
-    handleShow(orderId, statusId);
+  const updateStatusHandlerFirst = (orderId, statusId) => {
+    handleShowFirst(orderId, statusId);
+  };
+
+  const updateStatusHandlerSecond = (orderId, statusId) => {
+    handleShowSecond(orderId, statusId);
+  };
+
+  const updateStatusHandlerThird = (orderId, statusId) => {
+    handleShowThird(orderId, statusId);
+  };
+
+  const updateStatusHandlerFouth = (orderId, statusId) => {
+    handleShowFouth(orderId, statusId);
   };
 
   const confirmUpdateHandler = () => {
@@ -99,13 +159,13 @@ const Order = () => {
         toast.success("Cập nhật thành công.");
       })
       .catch((error) => toast.warning(error.response.data.Errors));
-    setShow(false);
+    setShowFirst(false);
   };
 
   const getAllOrderByStatus = (value) => {
     setStatus(value);
     setPage(1);
-    getAllOrderAndPagination(value, page, 8)
+    getAllOrderAndPagination(value, page, 20)
       .then((res) => {
         setOrders(res.data.content);
         setTotal(res.data.totalPages);
@@ -114,8 +174,8 @@ const Order = () => {
   };
 
   const getAllOrderByOrderStatusAndYearAndMonth = (value) => {
-    setFrom('');
-    setTo('');
+    setFrom("");
+    setTo("");
     getOrderByOrderStatusAndYearAndMonth(status, year, value, page, 8)
       .then((res) => {
         setOrders(res.data.content);
@@ -245,6 +305,12 @@ const Order = () => {
                       <th scope="col">Tổng tiền</th>
                       <th scope="col">
                         <Badge
+                          type={orderStatus["Chờ xác nhận"]}
+                          content={"Chờ xác nhận"}
+                        />
+                      </th>
+                      <th scope="col">
+                        <Badge
                           type={orderStatus["Đang xử lí"]}
                           content={"Đang xử lí"}
                         />
@@ -299,9 +365,6 @@ const Order = () => {
                                 name={index}
                                 checked={item.orderStatus.id === 1}
                                 value="1"
-                                onChange={(e) =>
-                                  updateStatusHandler(item.id, e.target.value)
-                                }
                               />
                             </div>
                           </th>
@@ -314,7 +377,10 @@ const Order = () => {
                                 checked={item.orderStatus.id === 2}
                                 value="2"
                                 onChange={(e) =>
-                                  updateStatusHandler(item.id, e.target.value)
+                                  updateStatusHandlerFirst(
+                                    item.id,
+                                    e.target.value
+                                  )
                                 }
                               />
                             </div>
@@ -328,7 +394,10 @@ const Order = () => {
                                 checked={item.orderStatus.id === 3}
                                 value="3"
                                 onChange={(e) =>
-                                  updateStatusHandler(item.id, e.target.value)
+                                  updateStatusHandlerSecond(
+                                    item.id,
+                                    e.target.value
+                                  )
                                 }
                               />
                             </div>
@@ -342,7 +411,27 @@ const Order = () => {
                                 checked={item.orderStatus.id === 4}
                                 value="4"
                                 onChange={(e) =>
-                                  updateStatusHandler(item.id, e.target.value)
+                                  updateStatusHandlerThird(
+                                    item.id,
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </div>
+                          </th>
+                          <th>
+                            <div className="form-check mb-4">
+                              <input
+                                className="form-check-input"
+                                type="radio"
+                                name={index}
+                                checked={item.orderStatus.id === 5}
+                                value="5"
+                                onChange={(e) =>
+                                  updateStatusHandlerFouth(
+                                    item.id,
+                                    e.target.value
+                                  )
                                 }
                               />
                             </div>
@@ -393,22 +482,147 @@ const Order = () => {
           </ul>
         </nav>
       </div>
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={showFirst} onHide={handleCloseFirst}>
         <Modal.Header closeButton>
-          <Modal.Title>Xác nhận cập nhật?</Modal.Title>
+          <Modal.Title style={{ textAlign: "center" }}>
+            Xác nhận cập nhật?
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Modal.Footer>
-              <Button variant="danger" onClick={confirmUpdateHandler}>
-                Xác nhận
-              </Button>
-              <Button variant="primary" onClick={handleClose}>
-                Đóng
-              </Button>
-            </Modal.Footer>
-          </Form>
+          <Alert variant="success">
+            <Alert.Heading>
+              Gọi điện cho khách hàng xác nhận những thông tin
+            </Alert.Heading>
+            <hr />
+            <p className="font-weight-bold">
+              Tên khách hàng: {temp && temp.fullname}
+            </p>
+            <p className="font-weight-bold">
+              Số điện thoại: {temp && temp.phone}
+            </p>
+            <p className="font-weight-bold">
+              Địa chỉ nhận hàng: {temp && temp.address}
+            </p>
+            <p className="font-weight-bold">Sản phẩm mua:</p>
+            {attribute &&
+              attribute.map((item, index) => (
+                <p key={index}>
+                  {item.attribute.name} - Size {item.attribute.size} - Số lượng{" "}
+                  {item.quantity}
+                </p>
+              ))}
+          </Alert>
+          <Form.Group className="mb-3" controlId="formBasicCheckbox">
+            <Form.Check type="checkbox" label="Đã xác nhận đơn hàng." />
+          </Form.Group>
         </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={confirmUpdateHandler}>
+            Xác nhận
+          </Button>
+          <Button variant="primary" onClick={handleCloseFirst}>
+            Đóng
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showSecond} onHide={handleCloseSecond}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ textAlign: "center" }}>
+            Xác nhận cập nhật?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="success">
+            <Alert.Heading>Cập nhật thông tin vận đơn</Alert.Heading>
+            <hr />
+            <Form.Label style={{ marginRight: 30, marginBottom: 10 }}>
+              Hãng vận chuyển
+            </Form.Label>
+            <Form.Select style={{ height: 40, width: 300, marginBottom: 20 }}>
+              <option value="ViettelPost">ViettelPost</option>
+              <option value="J&T">J&T</option>
+              <option value="Gojek">Gojek</option>
+              <option value="AhaMove">AhaMove</option>
+            </Form.Select>
+            <Form>
+            <Form.Label style={{ marginRight: 30, marginBottom: 10  }}>Mã vận đơn</Form.Label>
+            <Form.Control style={{ height: 40, width: 300, marginBottom: 20  }} type="text" />
+            </Form>
+            <Form>
+            <Form.Label style={{ marginRight: 30, marginBottom: 10  }}>Ngày nhận dự kiến</Form.Label>
+            <Form.Control style={{ height: 40, width: 300 }} type="date" />
+            </Form>
+          </Alert>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={confirmUpdateHandler}>
+            Xác nhận
+          </Button>
+          <Button variant="primary" onClick={handleCloseSecond}>
+            Đóng
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showThird} onHide={handleCloseThird}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ textAlign: "center" }}>
+            Xác nhận cập nhật?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="success">
+            <Alert.Heading>Tiền đã về tay?</Alert.Heading>
+            <hr />
+            <p className="font-weight-bold">
+              Tổng tiền đơn hàng: {temp && temp.total.toLocaleString()} đ
+            </p>
+          </Alert>
+          <Form.Group className="mb-3" controlId="formBasicCheckbox">
+            <Form.Check type="checkbox" label="Xác nhận đã nhận tiền." />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={confirmUpdateHandler}>
+            Xác nhận
+          </Button>
+          <Button variant="primary" onClick={handleCloseThird}>
+            Đóng
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showFouth} onHide={handleCloseFouth}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{ textAlign: "center" }}>
+            Xác nhận cập nhật?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <Alert variant="danger">
+            <Alert.Heading>Hủy đơn hàng</Alert.Heading>
+            <hr />
+            <Form.Label style={{ marginRight: 30, marginBottom: 10 }}>
+              Lí do hủy đơn
+            </Form.Label>
+            <Form.Select style={{ height: 40, width: 420, marginBottom: 20 }}>
+              <option value="Đặt trùng">Đặt trùng</option>
+              <option value="Thêm bớt sản phẩm">Thêm bớt sản phẩm</option>
+              <option value="Gojek">Không còn nhu cầu</option>
+              <option value="AhaMove">Lí do khác</option>
+            </Form.Select>
+            <Form>
+            <Form.Label style={{ marginRight: 30, marginBottom: 10  }}>Mô tả</Form.Label>
+            <Form.Control as="textarea" rows={3} />
+            </Form>
+          </Alert>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={confirmUpdateHandler}>
+            Xác nhận
+          </Button>
+          <Button variant="primary" onClick={handleCloseFouth}>
+            Đóng
+          </Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );
