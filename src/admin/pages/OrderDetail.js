@@ -76,7 +76,7 @@ const OrderDetail = () => {
           <table className="table table-striped table-bordered">
             <thead>
               <tr>
-                <th scope="col">Mã sản phẩm</th>
+                <th scope="col">Tên sản phẩm</th>
                 <th scope="col">Size</th>
                 <th scope="col">Giá</th>
                 <th scope="col">Số lượng</th>
@@ -87,7 +87,7 @@ const OrderDetail = () => {
               {orderDetail &&
                 orderDetail.map((item, index) => (
                   <tr key={index}>
-                    <th scope="row">{item.attribute.id}</th>
+                    <th scope="row">{item.attribute.name}</th>
                     <td>{item.attribute.size}</td>
                     <td>{item.sellPrice.toLocaleString()}₫</td>
                     <td>{item.quantity}</td>
@@ -113,15 +113,26 @@ const OrderDetail = () => {
             </div>
           </div>
           <div className="row mb-5">
-            <div className="col-12 text ">
+            <div className="col text ">
               <p
                 className="display-4 text-primary"
                 style={{ fontSize: "24px" }}
               >
                 Trạng thái thanh toán
               </p>
-              <p style={{ fontWeight: "bolder" }}>
+              <p className="text-danger" style={{ fontWeight: "bolder" }}>
                 {order && order.isPending ? "Đã thanh toán" : "Chưa thanh toán"}
+              </p>
+            </div>
+            <div className="col text ">
+              <p
+                className="display-4 text-primary"
+                style={{ fontSize: "24px" }}
+              >
+                Trạng thái đơn hàng
+              </p>
+              <p className="text-danger" style={{ fontWeight: "bolder" }}>
+                {order.orderStatus && order.orderStatus.name}
               </p>
             </div>
           </div>

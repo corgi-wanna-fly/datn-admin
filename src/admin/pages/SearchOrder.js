@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams, useHistory } from "react-router-dom";
 import {
   getAllOrderAndPagination,
-  updateOrderWithStatus,
-  getOrderByOrderStatusAndYearAndMonth,
-  getOrderByOrderStatusBetweenDate,
   getOrderById,
   getOrderDetailByOrderId,
   updateCancel,
@@ -33,9 +30,9 @@ const pendingStatus = {
   false: "danger",
 };
 
-const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-const Order = () => {
+const SearchOrder = () => {
+
   const [orders, setOrders] = useState([]);
   const [showFirst, setShowFirst] = useState(false);
   const [showSecond, setShowSecond] = useState(false);
@@ -47,6 +44,9 @@ const Order = () => {
   const [description, setDescription] = useState(null);
   const [reason, setReason] = useState(null);
   const [shipDate, setShipDate] = useState(null);
+
+  const { id } = useParams();
+  const history = useHistory();
 
   const shipmentHandler = (value) => {
     console.log(value);
@@ -79,6 +79,7 @@ const Order = () => {
     setShowFirst(false);
     setFlagProcess(false);
   };
+
   const handleShowFirst = (orderId, statusId) => {
     getOrderById(orderId)
       .then((resp) => setTemp(resp.data))
@@ -110,6 +111,7 @@ const Order = () => {
   };
 
   const [flagSuccess, setFlagSuccess] = useState(false);
+
   const handleCloseThird = () => {
     setShowThird(false);
     setFlagSuccess(false);
@@ -142,39 +144,24 @@ const Order = () => {
   const [obj, setObj] = useState({});
   const [total, setTotal] = useState();
   const [page, setPage] = useState(1);
-  const [year, setYear] = useState(2022);
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
   const [temp, setTemp] = useState();
   const [attribute, setAttribute] = useState([]);
 
-  var rows = new Array(total).fill(0).map((zero, index) => (
-    <li
-      className={page === index + 1 ? "page-item active" : "page-item"}
-      key={index}
-    >
-      <button
-        className="page-link"
-        style={{ borderRadius: 50 }}
-        onClick={() => onChangePage(index + 1)}
-      >
-        {index + 1}
-      </button>
-    </li>
-  ));
-  const onChangePage = (page) => {
-    setPage(page);
-  };
 
   useEffect(() => {
     onLoad();
-  }, [page]);
+  }, [id]);
 
-  const onLoad = () => {
+  const onLoad = () => { 
     getAllOrderAndPagination(status, page, 20)
       .then((res) => {
-        setOrders(res.data.content);
-        setTotal(res.data.totalPages);
+        const data = res.data.content.filter((item) => item.id == id);
+        if(data.length == 0){
+          history.push('/error-page');
+        }else{
+          setOrders(res.data.content.filter((item) => item.id == id));
+          setTotal(res.data.totalPages);
+        }      
       })
       .catch((error) => console.log(error));
     getAllOrderStatus()
@@ -312,54 +299,6 @@ const Order = () => {
     setShowFouth(false);
   };
 
-  const getAllOrderByStatus = (value) => {
-    setStatus(value);
-    setPage(1);
-    getAllOrderAndPagination(value, page, 20)
-      .then((res) => {
-        setOrders(res.data.content);
-        setTotal(res.data.totalPages);
-      })
-      .catch((error) => console.log(error.response.data.Errors));
-  };
-
-  const getAllOrderByOrderStatusAndYearAndMonth = (value) => {
-    setFrom("");
-    setTo("");
-    getOrderByOrderStatusAndYearAndMonth(status, year, value, page, 20)
-      .then((res) => {
-        setOrders(res.data.content);
-        setTotal(res.data.totalPages);
-      })
-      .catch((error) => console.log(error.response.data.Errors));
-  };
-
-  const changeYearHandler = (value) => {
-    setYear(value);
-  };
-
-  const searchHandler = () => {
-    if (from.length === 0 || to.length === 0) {
-      toast.warning("Chọn ngày cần tìm kiếm.");
-    } else {
-      if (from > to) {
-        toast.warning("Chọn ngày tìm kiếm không hợp lệ.");
-      } else {
-        let a = from.split("-");
-        let strFrom = a[2] + "-" + a[1] + "-" + a[0];
-        let b = to.split("-");
-        let strTo = b[2] + "-" + b[1] + "-" + b[0];
-        console.log(strFrom + " " + strTo);
-        getOrderByOrderStatusBetweenDate(status, strFrom, strTo, page, 8)
-          .then((res) => {
-            setOrders(res.data.content);
-            setTotal(res.data.totalPages);
-          })
-          .catch((error) => console.log(error.response.data.Errors));
-      }
-    }
-  };
-
   const flagProcessHandler = (e) => {
     const { checked } = e.target;
     setFlagProcess(checked);
@@ -369,87 +308,12 @@ const Order = () => {
     const { checked } = e.target;
     setFlagSuccess(checked);
   };
+
   return (
     <div className="col-12">
       <div className="card">
         <div className="card__header">
           <h3>Đơn hàng</h3>
-        </div>
-        <div className="row">
-          <div className="col-sm-4 mt-2">
-            <select
-              className="form-control"
-              onChange={(event) => getAllOrderByStatus(event.target.value)}
-            >
-              <option value="0">Tất cả</option>
-              {orderStatuses &&
-                orderStatuses.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-            </select>
-          </div>
-          <div className="col-sm-4 mt-2">
-            <select
-              className="form-control"
-              onChange={(e) => changeYearHandler(e.target.value)}
-            >
-              <option selected disabled hidden>
-                Chọn năm
-              </option>
-              <option value="2019">2019</option>
-              <option value="2021">2021</option>
-              <option value="2022">2022</option>
-            </select>
-          </div>
-          <div className="col-sm-4 mt-2">
-            <select
-              className="form-control"
-              onChange={(e) =>
-                getAllOrderByOrderStatusAndYearAndMonth(e.target.value)
-              }
-            >
-              <option selected disabled hidden>
-                Chọn tháng
-              </option>
-              {month &&
-                month.map((item, index) => (
-                  <option key={index} value={item}>
-                    Tháng {item}
-                  </option>
-                ))}
-            </select>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-sm-4 mt-2">
-            <input
-              type="date"
-              name=""
-              id=""
-              className="border"
-              onChange={(e) => setFrom(e.target.value)}
-              value={from}
-            />
-          </div>
-
-          <div className="col-sm-4 mt-2">
-            <input
-              type="date"
-              name=""
-              id=""
-              className="border"
-              onChange={(e) => setTo(e.target.value)}
-              value={to}
-            />
-          </div>
-          <button
-            className="btn btn-primary mt-2"
-            onClick={() => searchHandler()}
-          >
-            Tìm kiếm
-          </button>
         </div>
         <div className="row"></div>
         <div className="card__body">
@@ -617,30 +481,7 @@ const Order = () => {
               </div>
             </div>
           )}
-        </div>
-        <nav aria-label="Page navigation">
-          <ul className="pagination offset-5 mt-3">
-            <li className={page === 1 ? "page-item disabled" : "page-item"}>
-              <button
-                className="page-link"
-                style={{ borderRadius: 50 }}
-                onClick={() => onChangePage(1)}
-              >
-                {`<<`}
-              </button>
-            </li>
-            {rows}
-            <li className={page === total ? "page-item disabled" : "page-item"}>
-              <button
-                className="page-link"
-                style={{ borderRadius: 50 }}
-                onClick={() => onChangePage(total)}
-              >
-                {`>>`}
-              </button>
-            </li>
-          </ul>
-        </nav>
+        </div>      
       </div>
       <Modal show={showFirst} onHide={handleCloseFirst}>
         <Modal.Header closeButton>
@@ -843,4 +684,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default SearchOrder;

@@ -14,15 +14,19 @@ const OrderForm = () => {
   const [orderStatus, setOrderStatus] = useState([]);
   const [orderDetail, setOrderDetail] = useState([]);
   const [amount, setAmount] = useState();
+  const [flag, setFlag] = useState();
   const [sub, setSub] = useState();
   const id = useParams();
   const history = useHistory();
-  
+
+  const flagHandler = (value) => {
+    setFlag(value);
+  };
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm();
 
   useEffect(() => {
@@ -91,26 +95,26 @@ const OrderForm = () => {
                 >
                   <div>
                     <h6 className="my-0">
-                      {item.attribute.id} - {item.attribute.size}
+                      {item.attribute.name} - Size {item.attribute.size}
                     </h6>
                     <small className="text-muted">
-                      {item.sellPrice.toLocaleString()} x {item.quantity}
+                      Giá {item.sellPrice.toLocaleString()} x {item.quantity}
                     </small>
                   </div>
                   <strong>
-                    {(item.sellPrice * item.quantity).toLocaleString()}
+                    {(item.sellPrice * item.quantity).toLocaleString()} đ
                   </strong>
                 </li>
               ))}
             {sub > amount && (
               <li className="list-group-item d-flex justify-content-between">
                 <span>Giá giảm (VND)</span>
-                <strong>- {(sub - amount).toLocaleString()}</strong>
+                <strong>- {(sub - amount).toLocaleString()} đ</strong>
               </li>
             )}
             <li className="list-group-item d-flex justify-content-between">
               <span>Tổng tiền (VND)</span>
-              <strong>{amount && amount.toLocaleString()}</strong>
+              <strong>{amount && amount.toLocaleString()} đ</strong>
             </li>
           </ul>
         </div>
@@ -173,6 +177,7 @@ const OrderForm = () => {
                   </div>
                 )}
               </div>
+
               <div className="col-sm-6 mt-2">
                 <label className="form-label">Email</label>
                 <input
@@ -214,7 +219,7 @@ const OrderForm = () => {
                 <select
                   className="form-control"
                   {...register("orderStatus", { required: false })}
-                  disabled={true}
+                  onChange={(e) => flagHandler(e.target.value)}
                 >
                   {orderStatus &&
                     orderStatus.map((item, index) => (

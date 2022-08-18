@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./topnav.css";
 import Dropdown from "../dropdown/Dropdown";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useHistory } from "react-router-dom";
 import user_image from "../../assets/images/tan.jpg";
 import user_menu from "../../assets/JsonData/user_menus.json";
 import { loadNotification, readNotification, pushNotification } from "../../api/NotificationApi";
@@ -9,9 +9,12 @@ import { toast } from "react-toastify";
 
 const TopNav = (props) => {
   const [notifications, setNotifications] = useState([]);
+  const [key, setKey] = useState("");
+  
+  const history = useHistory();
 
   const renderNotificationItem = (item, index) => (
-    <NavLink to={`/order-detail/${item.order.id}`} exact key={index}  onClick={() => readHandler(item.id)}>
+    <NavLink to={`/search/${item.order.id}`} exact key={index}  onClick={() => readHandler(item.id)}>
       <div className="notification-item" >
         <i className="bx bx-package"></i>
         <span className={item.type === 1 ? "text-primary" : "text-danger"}>{item.content}</span>
@@ -72,11 +75,19 @@ const TopNav = (props) => {
     image: user_image,
   };
 
+  const searchHandler = (key) =>{
+      history.push(`/search/${key}`);
+  }
+
+  const keyHanlder = (value) =>{
+      setKey(value);
+  }
+
   return (
     <div className="topnav">
       <div className="topnav__search">
-        <input type="text" placeholder="Search here..." />
-        <i className="bx bx-search"></i>
+        <input type="text" placeholder="Search here..." onChange={(e) => keyHanlder(e.target.value)}/>
+        <i className="bx bx-search" onClick={() => searchHandler(key)}></i>
       </div>
       <div className="topnav__right">
         <div className="topnav__right-item">

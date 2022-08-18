@@ -11,16 +11,16 @@ export const modifyCartItem = (data) =>{
 }
 
 export const removeCartItem = (data) =>{
-    const url = `api/site/cart/remove`;
+    const url = `/api/site/cart/remove`;
     return Instance.post(url, data);
 }
 
 export const reloadCartItem = (id) =>{
-    const url = `api/site/cart/reload?id=${id}`;
+    const url = `/api/site/cart/reload?id=${id}`;
     return Instance.get(url);
 }
 
 export const isEnoughCartItem = (id, quantity) =>{
-    const url = `api/site/cart/is-enough?id=${id}&quantity=${quantity}`;
+    const url = `/api/site/cart/is-enough?id=${id}&quantity=${quantity}`;
     return Instance.get(url);
 }
