@@ -1,13 +1,7 @@
 import React from "react";
-import { NavLink, useHistory } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Error = () => {
-
-  const history = useHistory();
-  
-  const goBack = () => {
-    history.goBack();
-  };
 
   return (
     <div
