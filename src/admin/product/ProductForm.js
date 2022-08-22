@@ -14,7 +14,7 @@ const ProductForm = () => {
   const [count, setCount] = useState(1);
   const [brand, setBrand] = useState([]);
   const [sale, setSale] = useState([]);
-  const [category, setCategory] = useState([]); 
+  const [category, setCategory] = useState([]);
   const [image, setImage] = useState([]);
 
   const history = useHistory();
@@ -41,8 +41,19 @@ const ProductForm = () => {
 
   const onFileChange = (event) => {
     const images = Array.from(event.target.files);
-    console.log(images);
-    setImage(images);
+    const links = images.map((item) => item.name);
+    let flag = false;
+    for (let i of links) {
+      if (!i.includes(".jpg") && !i.includes(".png")) {
+        toast.warning("File ảnh không hợp lệ.");
+        setImage([]);
+        flag = true;
+        break;
+      }
+    }
+    if (!flag) {
+      setImage(images);
+    }
   };
 
   const submitHandler = (data) => {
@@ -81,16 +92,16 @@ const ProductForm = () => {
         ].slice(0, count),
       };
       createProduct(flag)
-      .then(() => {
-        image.forEach((item) => {
-          upload(item)
-          .then((resp) => console.log(resp.data))
-          .catch((error) => console.log(error.response.data));
+        .then(() => {
+          image.forEach((item) => {
+            upload(item)
+              .then((resp) => console.log(resp.data))
+              .catch((error) => console.log(error.response.data));
+          });
+          toast.success("Thêm mới sản phẩm thành công");
+          history.push("/products");
         })
-        toast.success("Thêm mới sản phẩm thành công");
-        history.push("/products");
-      })
-      .catch((error) => toast.error(error.response.data.Errors))
+        .catch((error) => toast.error(error.response.data.Errors));
     }
   };
 
@@ -195,7 +206,10 @@ const ProductForm = () => {
                 <label className="form-label mb-3">Loại sản phẩm</label> <br />
                 {category &&
                   category.map((item, index) => (
-                    <div class="col-2 form-check form-check-inline mr-5" key={index}>
+                    <div
+                      class="col-2 form-check form-check-inline mr-5"
+                      key={index}
+                    >
                       <input
                         className="form-check-input"
                         type="checkbox"

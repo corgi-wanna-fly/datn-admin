@@ -33,7 +33,7 @@ const pendingStatus = {
   false: "danger",
 };
 
-const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
@@ -142,7 +142,8 @@ const Order = () => {
   const [obj, setObj] = useState({});
   const [total, setTotal] = useState();
   const [page, setPage] = useState(1);
-  const [year, setYear] = useState(2022);
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [temp, setTemp] = useState();
@@ -315,6 +316,8 @@ const Order = () => {
   const getAllOrderByStatus = (value) => {
     setStatus(value);
     setPage(1);
+    setYear("");
+    setMonth("");
     getAllOrderAndPagination(value, page, 20)
       .then((res) => {
         setOrders(res.data.content);
@@ -324,6 +327,7 @@ const Order = () => {
   };
 
   const getAllOrderByOrderStatusAndYearAndMonth = (value) => {
+    setMonth(value);
     setFrom("");
     setTo("");
     getOrderByOrderStatusAndYearAndMonth(status, year, value, page, 20)
@@ -394,8 +398,9 @@ const Order = () => {
             <select
               className="form-control"
               onChange={(e) => changeYearHandler(e.target.value)}
+              value={year}
             >
-              <option selected disabled hidden>
+              <option value="">
                 Chọn năm
               </option>
               <option value="2019">2019</option>
@@ -409,12 +414,13 @@ const Order = () => {
               onChange={(e) =>
                 getAllOrderByOrderStatusAndYearAndMonth(e.target.value)
               }
+              value={month}
             >
-              <option selected disabled hidden>
+              <option value="">
                 Chọn tháng
               </option>
-              {month &&
-                month.map((item, index) => (
+              {months &&
+                months.map((item, index) => (
                   <option key={index} value={item}>
                     Tháng {item}
                   </option>
