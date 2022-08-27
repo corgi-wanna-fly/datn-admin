@@ -6,8 +6,8 @@ import { toast } from "react-toastify";
 
 const role = {
   "ADMIN": 1,
-  "NHÂN VIÊN": 2,
-  "KHÁCH HÀNG": 3
+  "EMP": 2,
+  "CUS": 3
 }
 const EditAccount = () => {
   const { id } = useParams();
@@ -23,6 +23,7 @@ const EditAccount = () => {
   useEffect(() => {
     getAccountDetailByAccountId(id)
       .then((resp) => {
+        console.log(resp.data);
         reset(resp.data);
       })
       .catch((error) => toast.error(error.response.data.Errors));
@@ -174,8 +175,8 @@ const EditAccount = () => {
                 {...register("roleName", { required: true })}
               >
                 <option value="ADMIN">ADMIN</option>
-                <option value="NHÂN VIÊN">NHÂN VIÊN</option>
-                <option value="KHÁCH HÀNG">KHÁCH HÀNG</option>
+                <option value="EMP">NHÂN VIÊN</option>
+                <option value="CUS">KHÁCH HÀNG</option>
               </select>
             </div>
             <div className="col-sm-6 mt-5">
@@ -193,7 +194,7 @@ const EditAccount = () => {
           <button
             className="btn btn-primary btn-lg mt-5 mb-5"
             type="submit"
-            style={{ marginLeft: 50, borderRadius: 50 }}
+            style={{ marginLeft: 400, borderRadius: 50 }}
           >
             Cập nhật
           </button>

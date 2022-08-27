@@ -108,7 +108,7 @@ const Product = () => {
                       <tr key={index}>
                         <th scope="row">
                           <NavLink to={`/product-view/${item.id}`} exact>
-                            SP000{index + 1}
+                            #{index + 1}
                           </NavLink>
                         </th>
                         <th>{item.name}</th>

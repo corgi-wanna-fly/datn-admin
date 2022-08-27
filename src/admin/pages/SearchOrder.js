@@ -173,7 +173,7 @@ const SearchOrder = () => {
 
   useEffect(() => {
     onLoad();
-  }, [page]);
+  }, [page, id]);
 
   const onLoad = () => { 
     getAllOrderAndPagination(status, page, 20)

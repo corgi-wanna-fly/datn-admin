@@ -1,7 +1,7 @@
 import Instance from '../axios/Instance'
 
 export const getAccountDetailByAccountId = (id) =>{
-    const url = `/api/site/account/detail/${id}`;
+    const url = `api/admin/account/${id}`;
     return Instance.get(url);
 }
 export const getAccounts = (page, size) =>{
