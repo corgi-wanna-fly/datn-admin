@@ -3,7 +3,7 @@ import './chat.css';
 import ChatFeed from './ChatFeed';
 import { ChatEngine } from 'react-chat-engine';
 
-const projectID = '20cc05b8-9658-407a-a676-491e100d024a';
+const projectID = 'b4f510a5-aa2d-41c4-bede-f05f433e0097';
 
 const Chat = () => {
   return (

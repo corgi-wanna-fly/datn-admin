@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import {
-  getAllOrderAndPagination,
-  getOrderByOrderStatusAndYearAndMonth,
-  getOrderByOrderStatusBetweenDate,
   getOrderById,
   getOrderDetailByOrderId,
   updateCancel,
@@ -16,8 +13,8 @@ import Badge from "../badge/Badge";
 import { toast } from "react-toastify";
 import { Button, Form } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { getAllOrderStatus } from "../../api/OrderStatusApi";
 import Alert from "react-bootstrap/Alert";
+import Spinner from "../spinner/Spinner";
 
 const orderStatus = {
   "Chờ xác nhận": "secondary",
@@ -32,16 +29,14 @@ const pendingStatus = {
   false: "danger",
 };
 
-const month = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-
 const SearchOrder = () => {
-
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState();
+  const [status, setStatus] = useState(1);
   const [showFirst, setShowFirst] = useState(false);
   const [showSecond, setShowSecond] = useState(false);
   const [showThird, setShowThird] = useState(false);
   const [showFouth, setShowFouth] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [shipment, setShipment] = useState(null);
   const [code, setCode] = useState(null);
   const [description, setDescription] = useState(null);
@@ -51,27 +46,22 @@ const SearchOrder = () => {
   const { id } = useParams();
 
   const shipmentHandler = (value) => {
-    console.log(value);
     setShipment(value);
   };
 
   const codeHandler = (value) => {
-    console.log(value);
     setCode(value);
   };
 
   const descriptionHandler = (value) => {
-    console.log(value);
     setDescription(value);
   };
 
   const reasonHandler = (value) => {
-    console.log(value);
     setReason(value);
   };
 
   const shipDateHandler = (value) => {
-    console.log(value);
     setShipDate(value);
   };
 
@@ -141,50 +131,21 @@ const SearchOrder = () => {
       statusId: statusId,
     });
   };
-  const [status, setStatus] = useState(0);
-  const [orderStatuses, setOrderStatuses] = useState([]);
   const [obj, setObj] = useState({});
-  const [total, setTotal] = useState();
-  const [page, setPage] = useState(1);
-  const [year, setYear] = useState(2022);
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
   const [temp, setTemp] = useState();
   const [attribute, setAttribute] = useState([]);
 
-  var rows = new Array(total).fill(0).map((zero, index) => (
-    <li
-      className={page === index + 1 ? "page-item active" : "page-item"}
-      key={index}
-    >
-      <button
-        className="page-link"
-        style={{ borderRadius: 50 }}
-        onClick={() => onChangePage(index + 1)}
-      >
-        {index + 1}
-      </button>
-    </li>
-  ));
-
-  const onChangePage = (page) => {
-    setPage(page);
-  };
-
   useEffect(() => {
     onLoad();
-  }, [page, id]);
+  }, [id, status]);
 
-  const onLoad = () => { 
-    getAllOrderAndPagination(status, page, 20)
+  const onLoad = () => {
+    getOrderById(id)
       .then((res) => {
-        setOrders(res.data.content.filter((item) => item.id == id));
-        setTotal(1);
+        setOrders(res.data);
+        console.log(res.data);
       })
       .catch((error) => console.log(error));
-    getAllOrderStatus()
-      .then((resp) => setOrderStatuses(resp.data))
-      .catch((error) => console.log(error.response.data.Errors));
   };
 
   const updateStatusHandlerFirst = (orderId, statusId) => {
@@ -214,21 +175,18 @@ const SearchOrder = () => {
     };
 
     updateProcess(data)
-      .then((resp) => {
-        setStatus(obj.statusId);
-        setPage(1);
-        getAllOrderAndPagination(obj.statusId, 1, 20)
+      .then(() => {
+        getOrderById(id)
           .then((res) => {
-            setOrders(res.data.content);
-            setTotal(res.data.totalPages);
+            setOrders(res.data);
           })
           .catch((error) => console.log(error));
         toast.success("Cập nhật thành công.");
       })
       .catch((error) => toast.error(error.response.data.Errors));
-
     setFlagProcess(false);
     setShowFirst(false);
+    setStatus(2);
   };
 
   const confirmUpdateShip = () => {
@@ -242,13 +200,10 @@ const SearchOrder = () => {
     };
 
     updateShip(data)
-      .then((resp) => {
-        setStatus(obj.statusId);
-        setPage(1);
-        getAllOrderAndPagination(obj.statusId, 1, 20)
+      .then(() => {
+        getOrderById(id)
           .then((res) => {
-            setOrders(res.data.content);
-            setTotal(res.data.totalPages);
+            setOrders(res.data);
           })
           .catch((error) => console.log(error));
         toast.success("Cập nhật thành công.");
@@ -258,6 +213,7 @@ const SearchOrder = () => {
     setCode(null);
     setShipDate(null);
     setShowSecond(false);
+    setStatus(3);
   };
 
   const confirmUpdateSuccess = () => {
@@ -270,22 +226,25 @@ const SearchOrder = () => {
       shipDate: shipDate,
     };
 
+    if (orders.total >= 1000000) {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 10000);
+    }
     updateSuccess(data)
-      .then((resp) => {
-        setStatus(obj.statusId);
-        setPage(1);
-        getAllOrderAndPagination(obj.statusId, 1, 20)
+      .then(() => {
+        getOrderById(id)
           .then((res) => {
-            setOrders(res.data.content);
-            setTotal(res.data.totalPages);
+            setOrders(res.data);
           })
           .catch((error) => console.log(error));
         toast.success("Cập nhật thành công.");
       })
       .catch((error) => toast.error(error.response.data.Errors));
-
     setFlagSuccess(null);
     setShowThird(false);
+    setStatus(4);
   };
 
   const confirmUpdateCancel = () => {
@@ -299,13 +258,10 @@ const SearchOrder = () => {
     };
 
     updateCancel(data)
-      .then((resp) => {
-        setStatus(obj.statusId);
-        setPage(1);
-        getAllOrderAndPagination(obj.statusId, 1, 20)
+      .then(() => {
+        getOrderById(id)
           .then((res) => {
-            setOrders(res.data.content);
-            setTotal(res.data.totalPages);
+            setOrders(res.data);
           })
           .catch((error) => console.log(error));
         toast.success("Cập nhật thành công.");
@@ -315,54 +271,7 @@ const SearchOrder = () => {
     setReason(null);
     setDescription(null);
     setShowFouth(false);
-  };
-
-  const getAllOrderByStatus = (value) => {
-    setStatus(value);
-    setPage(1);
-    getAllOrderAndPagination(value, page, 20)
-      .then((res) => {
-        setOrders(res.data.content);
-        setTotal(res.data.totalPages);
-      })
-      .catch((error) => console.log(error.response.data.Errors));
-  };
-
-  const getAllOrderByOrderStatusAndYearAndMonth = (value) => {
-    setFrom("");
-    setTo("");
-    getOrderByOrderStatusAndYearAndMonth(status, year, value, page, 20)
-      .then((res) => {
-        setOrders(res.data.content);
-        setTotal(res.data.totalPages);
-      })
-      .catch((error) => console.log(error.response.data.Errors));
-  };
-
-  const changeYearHandler = (value) => {
-    setYear(value);
-  };
-
-  const searchHandler = () => {
-    if (from.length === 0 || to.length === 0) {
-      toast.warning("Chọn ngày cần tìm kiếm.");
-    } else {
-      if (from > to) {
-        toast.warning("Chọn ngày tìm kiếm không hợp lệ.");
-      } else {
-        let a = from.split("-");
-        let strFrom = a[2] + "-" + a[1] + "-" + a[0];
-        let b = to.split("-");
-        let strTo = b[2] + "-" + b[1] + "-" + b[0];
-        console.log(strFrom + " " + strTo);
-        getOrderByOrderStatusBetweenDate(status, strFrom, strTo, page, 8)
-          .then((res) => {
-            setOrders(res.data.content);
-            setTotal(res.data.totalPages);
-          })
-          .catch((error) => console.log(error.response.data.Errors));
-      }
-    }
+    setStatus(5);
   };
 
   const flagProcessHandler = (e) => {
@@ -380,82 +289,11 @@ const SearchOrder = () => {
         <div className="card__header">
           <h3>Đơn hàng</h3>
         </div>
-        <div className="row">
-          <div className="col-sm-4 mt-2">
-            <select
-              className="form-control"
-              onChange={(event) => getAllOrderByStatus(event.target.value)}
-            >
-              <option value="0">Tất cả</option>
-              {orderStatuses &&
-                orderStatuses.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-            </select>
+        {loading && (
+          <div className="text-center">
+            <Spinner></Spinner>
           </div>
-          <div className="col-sm-4 mt-2">
-            <select
-              className="form-control"
-              onChange={(e) => changeYearHandler(e.target.value)}
-            >
-              <option selected disabled hidden>
-                Chọn năm
-              </option>
-              <option value="2019">2019</option>
-              <option value="2021">2021</option>
-              <option value="2022">2022</option>
-            </select>
-          </div>
-          <div className="col-sm-4 mt-2">
-            <select
-              className="form-control"
-              onChange={(e) =>
-                getAllOrderByOrderStatusAndYearAndMonth(e.target.value)
-              }
-            >
-              <option selected disabled hidden>
-                Chọn tháng
-              </option>
-              {month &&
-                month.map((item, index) => (
-                  <option key={index} value={item}>
-                    Tháng {item}
-                  </option>
-                ))}
-            </select>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-sm-4 mt-2">
-            <input
-              type="date"
-              name=""
-              id=""
-              className="border"
-              onChange={(e) => setFrom(e.target.value)}
-              value={from}
-            />
-          </div>
-
-          <div className="col-sm-4 mt-2">
-            <input
-              type="date"
-              name=""
-              id=""
-              className="border"
-              onChange={(e) => setTo(e.target.value)}
-              value={to}
-            />
-          </div>
-          <button
-            className="btn btn-primary mt-2"
-            onClick={() => searchHandler()}
-          >
-            Tìm kiếm
-          </button>
-        </div>
+        )}
         <div className="row"></div>
         <div className="card__body">
           {orders && (
@@ -502,150 +340,144 @@ const SearchOrder = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders &&
-                      orders.map((item, index) => (
-                        <tr key={index}>
-                          <th scope="row">
-                            <NavLink to={`/detail-order/${item.id}`} exact>
-                              #OD{item.id}
-                            </NavLink>
-                          </th>
-                          <th>{item.createDate}</th>
-                          <th>
-                            <Badge
-                              type={pendingStatus[item.isPending]}
-                              content={
-                                item.isPending
-                                  ? "Đã thanh toán"
-                                  : "Chưa thanh toán"
+                    {orders && (
+                      <tr>
+                        <th scope="row">
+                          <NavLink to={`/detail-order/${orders.id}`} exact>
+                            #OD{orders.id}
+                          </NavLink>
+                        </th>
+                        <th>{orders.createDate}</th>
+                        <th>
+                          <Badge
+                            type={pendingStatus[orders.isPending]}
+                            content={
+                              orders.isPending
+                                ? "Đã thanh toán"
+                                : "Chưa thanh toán"
+                            }
+                          />
+                        </th>
+                        <th> {orders.total} ₫</th>
+                        <th>
+                          <div className="form-check mb-4">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name={orders}
+                              checked={
+                                orders.orderStatus &&
+                                orders.orderStatus.id === 1
+                              }
+                              value="1"
+                            />
+                          </div>
+                        </th>
+                        <th>
+                          <div className="form-check mb-4">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name={orders}
+                              checked={
+                                orders.orderStatus &&
+                                orders.orderStatus.id === 2
+                              }
+                              value="2"
+                              onChange={(e) =>
+                                updateStatusHandlerFirst(
+                                  orders.id,
+                                  e.target.value
+                                )
                               }
                             />
-                          </th>
-                          <th> {item.total.toLocaleString()} ₫</th>
-                          <th>
-                            <div className="form-check mb-4">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name={index}
-                                checked={item.orderStatus.id === 1}
-                                value="1"
-                              />
-                            </div>
-                          </th>
-                          <th>
-                            <div className="form-check mb-4">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name={index}
-                                checked={item.orderStatus.id === 2}
-                                value="2"
-                                onChange={(e) =>
-                                  updateStatusHandlerFirst(
-                                    item.id,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                          </th>
-                          <th>
-                            <div className="form-check mb-4">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name={index}
-                                checked={item.orderStatus.id === 3}
-                                value="3"
-                                onChange={(e) =>
-                                  updateStatusHandlerSecond(
-                                    item.id,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                          </th>
-                          <th>
-                            <div className="form-check mb-4">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name={index}
-                                checked={item.orderStatus.id === 4}
-                                value="4"
-                                onChange={(e) =>
-                                  updateStatusHandlerThird(
-                                    item.id,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                          </th>
-                          <th>
-                            <div className="form-check mb-4">
-                              <input
-                                className="form-check-input"
-                                type="radio"
-                                name={index}
-                                checked={item.orderStatus.id === 5}
-                                value="5"
-                                onChange={(e) =>
-                                  updateStatusHandlerFouth(
-                                    item.id,
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                          </th>
-                          <th>
-                            {item.orderStatus.id !== 4 &&
-                            item.orderStatus.id !== 3 &&
-                            item.orderStatus.id !== 5 ? (
-                              <NavLink to={`/order-detail/${item.id}`} exact>
-                                <i
-                                  className="fa fa-pencil-square-o"
-                                  aria-hidden="true"
-                                ></i>
-                              </NavLink>
-                            ) : (
-                              ""
-                            )}
-                          </th>
-                        </tr>
-                      ))}
+                          </div>
+                        </th>
+                        <th>
+                          <div className="form-check mb-4">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name={orders}
+                              checked={
+                                orders.orderStatus &&
+                                orders.orderStatus.id === 3
+                              }
+                              value="3"
+                              onChange={(e) =>
+                                updateStatusHandlerSecond(
+                                  orders.id,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                        </th>
+                        <th>
+                          <div className="form-check mb-4">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name={orders}
+                              checked={
+                                orders.orderStatus &&
+                                orders.orderStatus.id === 4
+                              }
+                              value="4"
+                              onChange={(e) =>
+                                updateStatusHandlerThird(
+                                  orders.id,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                        </th>
+                        <th>
+                          <div className="form-check mb-4">
+                            <input
+                              className="form-check-input"
+                              type="radio"
+                              name={orders}
+                              checked={
+                                orders.orderStatus &&
+                                orders.orderStatus.id === 5
+                              }
+                              value="5"
+                              onChange={(e) =>
+                                updateStatusHandlerFouth(
+                                  orders.id,
+                                  e.target.value
+                                )
+                              }
+                            />
+                          </div>
+                        </th>
+                        <th>
+                          {orders.orderStatus &&
+                          orders.orderStatus.id !== 4 &&
+                          orders.orderStatus &&
+                          orders.orderStatus.id !== 3 &&
+                          orders.orderStatus &&
+                          orders.orderStatus.id !== 5 ? (
+                            <NavLink to={`/order-detail/${orders.id}`} exact>
+                              <i
+                                className="fa fa-pencil-square-o"
+                                aria-hidden="true"
+                              ></i>
+                            </NavLink>
+                          ) : (
+                            ""
+                          )}
+                        </th>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
             </div>
           )}
         </div>
-        <nav aria-label="Page navigation">
-          <ul className="pagination offset-5 mt-3">
-            <li className={page === 1 ? "page-item disabled" : "page-item"}>
-              <button
-                className="page-link"
-                style={{ borderRadius: 50 }}
-                onClick={() => onChangePage(1)}
-              >
-                {`<<`}
-              </button>
-            </li>
-            {rows}
-            <li className={page === total ? "page-item disabled" : "page-item"}>
-              <button
-                className="page-link"
-                style={{ borderRadius: 50 }}
-                onClick={() => onChangePage(total)}
-              >
-                {`>>`}
-              </button>
-            </li>
-          </ul>
-        </nav>
       </div>
       <Modal show={showFirst} onHide={handleCloseFirst}>
         <Modal.Header closeButton>

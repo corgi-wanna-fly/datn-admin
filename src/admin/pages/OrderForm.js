@@ -5,23 +5,17 @@ import {
   getOrderDetailByOrderId,
   updateOrder,
 } from "../../api/OrderApi";
-import { getAllOrderStatus } from "../../api/OrderStatusApi";
 import { useParams, useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const OrderForm = () => {
   const [order, setOrder] = useState();
-  const [orderStatus, setOrderStatus] = useState([]);
   const [orderDetail, setOrderDetail] = useState([]);
   const [amount, setAmount] = useState();
-  const [flag, setFlag] = useState();
   const [sub, setSub] = useState();
   const id = useParams();
   const history = useHistory();
 
-  const flagHandler = (value) => {
-    setFlag(value);
-  };
   const {
     register,
     handleSubmit,
@@ -34,9 +28,6 @@ const OrderForm = () => {
   }, []);
 
   const onLoad = () => {
-    getAllOrderStatus()
-      .then((resp) => setOrderStatus(resp.data))
-      .catch((error) => console.log(error));
     getOrderById(id.id)
       .then((resp) => {
         setOrder(resp.data);
@@ -212,21 +203,6 @@ const OrderForm = () => {
                 >
                   <option value="false">Chưa thanh toán</option>
                   <option value="true">Đã thanh toán</option>
-                </select>
-              </div>
-              <div className="col-sm-6 mt-2">
-                <label className="form-label">Trạng thái đơn hàng</label>
-                <select
-                  className="form-control"
-                  {...register("orderStatus", { required: false })}
-                  onChange={(e) => flagHandler(e.target.value)}
-                >
-                  {orderStatus &&
-                    orderStatus.map((item, index) => (
-                      <option key={index} value={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
                 </select>
               </div>
             </div>

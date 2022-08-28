@@ -13,7 +13,7 @@ const Layout = (prop) => {
         <Route
           render={(props) => (
             <div className="layout">
-              <Sidebar {...props} />
+              <Sidebar {...props} user={prop.user}/>
               <div className="layout__content">
                 <TopNav
                   user={prop.user}
