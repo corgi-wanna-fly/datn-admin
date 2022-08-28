@@ -14,7 +14,7 @@ const TopNav = (props) => {
   const history = useHistory();
 
   const renderNotificationItem = (item, index) => (
-    <NavLink to={`/search/${item.order.id}`} exact key={index}  onClick={() => readHandler(item.id)}>
+    <NavLink to={item.type == 3 ? `/product-detail/${item.product.id}` : `/search/${item.order.id}`} exact key={index}  onClick={() => readHandler(item.id)}>
       <div className="notification-item" >
         <i className="bx bx-package"></i>
         <span className={item.type === 1 ? "text-primary" : "text-danger"}>{item.content}</span>

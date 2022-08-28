@@ -194,7 +194,7 @@ const EditAccount = () => {
           <button
             className="btn btn-primary btn-lg mt-5 mb-5"
             type="submit"
-            style={{ marginLeft: 400, borderRadius: 50 }}
+            style={{ marginLeft: 500, borderRadius: 50 }}
           >
             Cập nhật
           </button>

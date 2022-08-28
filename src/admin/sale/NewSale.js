@@ -100,9 +100,9 @@ const NewSale = () => {
               </div>
             </div>
             <button
-              className="btn btn-primary btn-lg mt-5 mb-5"
+              className="btn btn-primary btn-lg mt-5 mb-5 offset-4"
               type="submit"
-              style={{ marginLeft: 80, borderRadius: 50 }}
+              style={{ marginLeft: 500, borderRadius: 50 }}
             >
               Thêm mới
             </button>
