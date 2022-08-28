@@ -58,43 +58,92 @@ const EditProduct = () => {
       .catch((error) => console.log(error));
   };
   const submitHandler = (data) => {
-    const flag = {
-      id: id,
-      name: data.name,
-      code: data.code,
-      description: data.description,
-      brandId: data.brandId,
-      saleId: data.saleId,
-      categoryId: data.category,
-      attribute: [
-        {
-          size: data.size1,
-          price: data.price1,
-          stock: data.quantity1,
-        },
-        {
-          size: data.size2,
-          price: data.price2,
-          stock: data.quantity2,
-        },
-        {
-          size: data.size3,
-          price: data.price3,
-          stock: data.quantity3,
-        },
-        {
-          size: data.size4,
-          price: data.price4,
-          stock: data.quantity4,
-        },
-      ].slice(0, count),
-    };
-    modifyProduct(flag)
-      .then(() => {
-        toast.success("Cập nhật thành công!");
-        history.push("/products");
-      })
-      .catch((error) => console.log(error.response.data));
+    const nums = [
+      data.size1,
+      data.size2,
+      data.size3,
+      data.size4,
+      data.size5,
+      data.size6,
+      data.size7,
+      data.size8,
+      data.size9,
+      data.size10,
+    ];
+    const newNums = nums.slice(0, count);
+    const hasDuplicate = newNums.some(x => newNums.indexOf(x) !== newNums.lastIndexOf(x));
+    if(hasDuplicate){
+      toast.warning("Nhập trùng size. Vui lòng nhập lại!");
+    }else{
+      const flag = {
+        id: id,
+        name: data.name,
+        code: data.code,
+        description: data.description,
+        brandId: data.brandId,
+        saleId: data.saleId,
+        categoryId: data.category,
+        attribute: [
+          {
+            size: data.size1,
+            price: data.price1,
+            stock: data.quantity1,
+          },
+          {
+            size: data.size2,
+            price: data.price2,
+            stock: data.quantity2,
+          },
+          {
+            size: data.size3,
+            price: data.price3,
+            stock: data.quantity3,
+          },
+          {
+            size: data.size4,
+            price: data.price4,
+            stock: data.quantity4,
+          },
+          {
+            size: data.size5,
+            price: data.price5,
+            stock: data.quantity5,
+          },
+          {
+            size: data.size6,
+            price: data.price6,
+            stock: data.quantity6,
+          },
+          {
+            size: data.size7,
+            price: data.price7,
+            stock: data.quantity7,
+          },
+          {
+            size: data.size8,
+            price: data.price8,
+            stock: data.quantity8,
+          },
+          {
+            size: data.size9,
+            price: data.price9,
+            stock: data.quantity9,
+          },
+          {
+            size: data.size10,
+            price: data.price10,
+            stock: data.quantity10,
+          }
+        ].slice(0, count),
+      };
+      modifyProduct(flag)
+        .then(() => {
+          toast.success("Cập nhật thành công!");
+          history.push("/products");
+        })
+        .catch((error) => console.log(error.response.data));
+    }
+    
   };
   return (
     <div className="pb-3 container-fluid card">
@@ -218,7 +267,7 @@ const EditProduct = () => {
                 value={count}
               >
                 {numbers.map((item, index) => (
-                  <option value={item} key={index} disabled={item < count}>
+                  <option value={item} key={index} disabled={item < attributes.length} hidden={item < attributes.length}>
                     {index + 1}
                   </option>
                 ))}
